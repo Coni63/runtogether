@@ -1,12 +1,16 @@
 import csv
+import io
+import zipfile
 from datetime import datetime
-from pathlib import Path
 from django.core.management.base import BaseCommand
+import requests
 from city.models import City
 
 
 class Command(BaseCommand):
     """
+    Automatically downloads and processes GeoNames cities500.zip dataset.
+
     URL of csv zipped: https://download.geonames.org/export/dump/cities500.zip
 
     The main 'geoname' table has the following fields :
@@ -32,66 +36,85 @@ class Command(BaseCommand):
     modification date : date of last modification in yyyy-MM-dd format
     """
 
-    help = "Populate the table using GeoNames dataset"
+    help = "Populate the table using GeoNames dataset (auto-downloads from GeoNames.org)"
 
-    def add_arguments(self, parser):
-        parser.add_argument("path", type=str)
+    GEONAMES_URL = "https://download.geonames.org/export/dump/cities500.zip"
+    EXPECTED_FILENAME = "cities500.txt"
 
     def handle(self, *args, **options):
-        filepath = Path(options["path"])
-        if not filepath.exists():
-            self.stdout.write(self.style.ERROR(f'File not found "{filepath}"'))
+        # Download the ZIP file
+        self.stdout.write("Downloading GeoNames dataset...")
+        try:
+            response = requests.get(self.GEONAMES_URL, stream=True, timeout=60)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            self.stdout.write(self.style.ERROR(f"Failed to download file: {e}"))
             return
 
-        # 1. On récupère l'existant en RAM pour comparer
-        # On stocke {id: last_modified}
+        # Extract the txt file from ZIP in memory
+        self.stdout.write("Extracting data from ZIP...")
+        try:
+            zip_content = io.BytesIO(response.content)
+            with zipfile.ZipFile(zip_content, "r") as zip_ref:
+                # Read the cities500.txt file directly from the ZIP
+                if self.EXPECTED_FILENAME not in zip_ref.namelist():
+                    self.stdout.write(self.style.ERROR(f'Expected file "{self.EXPECTED_FILENAME}" not found in ZIP'))
+                    return
+
+                txt_content = zip_ref.read(self.EXPECTED_FILENAME).decode("utf-8")
+        except (zipfile.BadZipFile, KeyError, UnicodeDecodeError) as e:
+            self.stdout.write(self.style.ERROR(f"Failed to extract file: {e}"))
+            return
+
+        # Fetch existing cities from database
         self.stdout.write("Fetching existing cities from database...")
         existing_cities = {c.id: c.last_modified for c in City.objects.all()}
 
         to_create = []
         to_update = []
 
+        # Parse CSV data from memory
         self.stdout.write("Parsing CSV and comparing data...")
-        with open(filepath, encoding="utf-8") as f:
-            reader = csv.reader(f, delimiter="\t")
+        csv_file = io.StringIO(txt_content)
+        reader = csv.reader(csv_file, delimiter="\t")
 
-            for line in reader:
-                try:
-                    geonameid = int(line[0])
-                    name = line[1]
-                    clean_name = line[2]
-                    latitude = line[4]
-                    longitude = line[5]
-                    country = line[8]
-                    last_modified = datetime.strptime(line[18], "%Y-%m-%d").date()
+        for line in reader:
+            try:
+                geonameid = int(line[0])
+                name = line[1]
+                clean_name = line[2]
+                latitude = line[4]
+                longitude = line[5]
+                country = line[8]
+                last_modified = datetime.strptime(line[18], "%Y-%m-%d").date()
 
-                    if len(name) > 60 or len(clean_name) > 60:
-                        print(f"Skip: {name}")
-                        continue
-
-                    city_obj = City(
-                        id=geonameid,
-                        name=name,
-                        clean_name=clean_name,
-                        latitude=latitude,
-                        longitude=longitude,
-                        country=country,
-                        last_modified=last_modified,
-                    )
-
-                    if geonameid not in existing_cities:
-                        to_create.append(city_obj)
-                    elif last_modified > existing_cities[geonameid]:
-                        to_update.append(city_obj)
-                except (IndexError, ValueError):
+                if len(name) > 60 or len(clean_name) > 60:
+                    print(f"Skip: {name}")
                     continue
 
-        # 2. Bulk Create (par lots de 5000 pour ne pas saturer la RAM/SQL)
+                city_obj = City(
+                    id=geonameid,
+                    name=name,
+                    clean_name=clean_name,
+                    latitude=latitude,
+                    longitude=longitude,
+                    country=country,
+                    last_modified=last_modified,
+                )
+
+                if geonameid not in existing_cities:
+                    to_create.append(city_obj)
+                elif last_modified > existing_cities[geonameid]:
+                    to_update.append(city_obj)
+            except (IndexError, ValueError):
+                continue
+
+        # Bulk Create
         if to_create:
             self.stdout.write(f"Creating {len(to_create)} new cities...")
             City.objects.bulk_create(to_create, batch_size=5000)
 
-        # 3. Bulk Update
+        # Bulk Update
         if to_update:
             self.stdout.write(f"Updating {len(to_update)} cities...")
             City.objects.bulk_update(
