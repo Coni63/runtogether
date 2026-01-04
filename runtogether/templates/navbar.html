@@ -1,15 +1,47 @@
 {% load static %}
 
 <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50 border-b border-base-300 pr-8 pl-8">
-    <div class="flex-1">
-        <a href="{% url 'projects:project_list' %}" class="text-xl flex items-center space-x-2">
+    {% comment %} <div class="flex-1">
+        <a href="{% url 'home:homepage' %}" class="text-xl flex items-center space-x-2">
             <span><i data-lucide="list-checks"></i></span>
-            <span class="font-bold">Checklist Manager</span>
+            <span class="font-bold">Run Together</span>
+        </a>
+
+        <!-- Main nav (desktop) -->
+        <div class="hidden md:flex ml-10 space-x-6">
+            <a href="" class="btn btn-ghost btn-sm">Races</a>
+            <a href="" class="btn btn-ghost btn-sm">Clubs</a>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Left: Logo -->
+    <div class="navbar-start">
+        <a href="{% url 'home:homepage' %}" class="text-xl flex items-center gap-2">
+            <i data-lucide="list-checks"></i>
+            <span class="font-bold">Run Together</span>
         </a>
     </div>
 
-    <div class="flex-none gap-2">
-        {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
+        <!-- Center: Main navigation (desktop) -->
+        <div class="navbar-center hidden md:flex gap-2">
+            <a href="{% url 'race:list' %}" class="btn btn-ghost btn-sm">Races</a>
+            <a href="{% url 'club:list' %}" class="btn btn-ghost btn-sm">Clubs</a>
+        </div>
+
+        <div class="navbar-end gap-2">
+
+            <!-- Mobile menu -->
+            <div class="dropdown dropdown-end md:hidden">
+                <label tabindex="0" class="btn btn-ghost btn-circle">
+                    <i data-lucide="menu"></i>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 border border-base-300">
+                    <li><a href="{% url 'race:list' %}">Races</a></li>
+                    <li><a href="{% url 'club:list' %}">Clubs</a></li>
+                </ul>
+            </div>
+
             {# User Dropdown Menu #}
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="avatar avatar-placeholder">
@@ -47,13 +79,15 @@
                     </li>
                 </ul>
             </div>
-        {% else %}
+        </div>
+    {% else %}
+        <div class="navbar-end gap-2">
             <a href="{% url 'accounts:login' %}" class="btn btn-primary">
                 Login
             </a>
             <a href="{% url 'accounts:register' %}" class="btn btn-primary">
                 Register
             </a>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 </div>

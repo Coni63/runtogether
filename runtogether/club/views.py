@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def list_clubs(request):
+    return render(request, "club/clubs.html")

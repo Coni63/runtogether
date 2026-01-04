@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("projects:project_list")
+        return redirect("home:homepage")
 
     if request.method == "GET":
         form = AuthenticationForm()
@@ -31,21 +31,21 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("projects:project_list")
+            return redirect("home:homepage")
         else:
             return render(request, "accounts/login.html", {"form": form})
 
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect("projects:project_list")
+        return redirect("home:homepage")
 
     if request.method == "POST":
         form = BasicRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("projects:project_list")
+            return redirect("home:homepage")
         else:
             return render(request, "accounts/register.html", {"form": form})
     else:
