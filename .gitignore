@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+theme/static/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# files generated with django collectstatic
+staticfiles/
+
+# local configuration file
+.env
+
+.coverage
+coverage.xml
+*.sqlite3
+pytest.xml

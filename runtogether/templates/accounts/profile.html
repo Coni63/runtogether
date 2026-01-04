@@ -1,0 +1,73 @@
+{% extends "base.html" %} 
+{% load crispy_forms_tags custom_filters %} 
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+
+<div class="w-full flex items-center justify-center py-12">
+    <div class="w-full max-w-md mx-auto">
+        <div class="card shadow-2xl bg-base-100 border border-base-300/50 rounded-2xl">
+            <div class="card-body p-8">
+                
+                <h2 class="card-title text-3xl font-bold mb-6 text-center">
+                    <i data-lucide="user" style="width: 32px; height: 32px;"></i>Profile
+                </h2>
+
+                {# Afficher les messages Django (e.g., messages de succès après la redirection) #}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {# Début du formulaire #}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {# Afficher les erreurs non liées aux champs (e.g., erreur du formulaire complet) #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-error mb-4">
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {# Utilisation de crispy_forms pour un rendu facile et stylisé #}
+                    {{ form|crispy }}
+
+                    {# Champ masqué pour l'utilisateur, généralement l'identifiant, si besoin #}
+                    {# <input type="hidden" name="user_id" value="{{ user.id }}"> #}
+
+                    <div class="card-actions justify-end mt-6">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Save
+                        </button>
+                    </div>
+                </form>
+                {# Fin du formulaire #}
+
+                <div class="divider"></div>
+                
+                <div class="grid grid-cols-[max-content,max-content,1fr] gap-x-2 text-left">
+                    <span class="justify-self-end">Username :</span>
+                    <b class="col-start-2 justify-self-start">{{ user.username }}</b>
+
+                    <span class="justify-self-end">Email :</span>
+                    <b class="col-start-2">{{ user.email|default:"Not set" }}</b>
+
+                    <span class="justify-self-end">Registered on :</span>
+                    <b class="col-start-2">{{ user.date_joined|smart_timesince }}</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

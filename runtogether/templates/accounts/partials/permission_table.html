@@ -1,0 +1,153 @@
+{% load static custom_filters %}
+
+{# This page render the project edit page in which you can set user permission #}
+
+{% partialdef user_row %}
+    <tr class="border-b border-gray-200 hover:bg-gray-100" id="permission-{{permission.id}}">
+        <th class="py-3 px-2 text-left">{{ index }}</th>
+        <td class="py-3 px-6 text-left">{{ permission.user.username }}</td>
+        <td class="py-3 px-2 text-center">
+            {% if permission.user != user %}
+                <form hx-post="{% url 'accounts:user_permissions_update' project_id=permission.project_id permission_id=permission.id %}"
+                    hx-target="#permission-{{ permission.id }}" 
+                    hx-swap="outerHTML" 
+                    hx-trigger="change" 
+                    class="inline-block">
+                    {% csrf_token %}
+                    <input type="hidden" name="index" value="{{ index }}">
+                    <input type="hidden" name="field_name" value="can_view"> <input type="checkbox" 
+                        name="can_view" 
+                        {% if permission.can_view %}checked{% endif %} 
+                        class="checkbox checkbox-xs" />
+                </form>
+            {% else %}
+                <input type="checkbox" 
+                        {% if permission.can_view %}checked{% endif %} 
+                        class="checkbox checkbox-xs" disabled />
+            {% endif %}
+        </td>
+        <td class="py-3 px-2 text-center">
+            {% if permission.user != user %}
+                <form hx-post="{% url 'accounts:user_permissions_update' project_id=permission.project_id permission_id=permission.id %}"
+                    hx-target="#permission-{{ permission.id }}" 
+                    hx-swap="outerHTML" 
+                    hx-trigger="change" 
+                    class="inline-block">
+                    {% csrf_token %}
+                    <input type="hidden" name="index" value="{{ index }}">
+                    <input type="hidden" name="field_name" value="can_edit"> <input type="checkbox" 
+                        name="can_edit" 
+                        {% if permission.can_edit %}checked{% endif %} 
+                        class="checkbox checkbox-xs" />
+                </form>
+            {% else %}
+                <input type="checkbox" 
+                        {% if permission.can_edit %}checked{% endif %} 
+                        class="checkbox checkbox-xs" disabled />
+            {% endif %}
+        </td>
+        <td class="py-3 px-2 text-center">
+            {% if permission.user != user %}
+                <form hx-post="{% url 'accounts:user_permissions_update' project_id=permission.project_id permission_id=permission.id %}"
+                    hx-target="#permission-{{ permission.id }}" 
+                    hx-swap="outerHTML" 
+                    hx-trigger="change" 
+                    class="inline-block">
+                    {% csrf_token %}
+                    <input type="hidden" name="index" value="{{ index }}">
+                    <input type="hidden" name="field_name" value="is_admin"> <input type="checkbox" 
+                        name="is_admin" 
+                        {% if permission.is_admin %}checked{% endif %} 
+                        class="checkbox checkbox-xs" />
+                </form>
+            {% else %}
+                <input type="checkbox" 
+                        {% if permission.is_admin %}checked{% endif %} 
+                        class="checkbox checkbox-xs" disabled />
+            {% endif %}
+        </td>
+        <td class="py-3 px-4 text-center">{{ permission.user.last_login|smart_timesince }}</td>
+        <td class="py-3 px-2 text-center">
+            {% if permission.user != user %}
+            <form hx-delete="{% url 'accounts:user_permissions_update' project_id=permission.project_id permission_id=permission.id %}"
+                hx-confirm="Are you sure you want to remove all permissions to {{ permission.user.username }} ?"
+                hx-target="#permission-{{ permission.id }}"
+                hx-swap="outerHTML"
+                hx-trigger="submit">
+                
+                {% csrf_token %}
+                
+                <button type="submit" class="btn btn-ghost btn-sm" title="Delete">
+                    <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                </button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+{% endpartialdef %}
+
+
+<div class="card bg-base-100 shadow-xl mt-6">
+    <div class="card-body">
+        <div class="overflow-x-auto">
+
+        <h1 class="text-xl font-bold mb-4">User Permissions</h1>
+
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <form hx-post="{% url 'accounts:user_permissions_add' project_id=project.id %}"
+                hx-target="#table_user"
+                hx-swap="beforeend"
+                class="flex items-center space-x-4 w-full"
+                >
+                {% csrf_token %}
+                <div class="w-full md:w-1/3 mb-4 md:mb-0">
+
+                    <label class="form-control w-full">
+                        <select name="user_id"
+                                required
+                                class="w-full px-4 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 select select-bordered"
+                        >
+                            <option value="" disabled selected>Select user to add</option>
+                            {% for user in other_users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% empty %}
+                                <option value="" disabled>All users have permissions</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary gap-2" hx-indicator="#add-user-indicator">
+                    <span><i data-lucide="user-plus" style="width: 16px; height: 16px;"></i></span>
+                    <span>Add User</span>
+                </button>
+                <span class="loading loading-spinner loading-sm htmx-indicator" id="add-user-indicator"></span>
+            </form>
+           
+        </div>
+
+        <!-- User Table -->
+        <div class="overflow-x-auto bg-white rounded-lg shadow">
+            <table class="w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-2 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Username</th>
+                        <th class="py-3 px-2 text-center">Read</th>
+                        <th class="py-3 px-2 text-center">Edit</th>
+                        <th class="py-3 px-2 text-center">Admin</th>
+                        <th class="py-3 px-4 text-center">Last Login</th>
+                        <th class="py-3 px-2 text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="table_user">
+                    {% for permission in current_permissions %}
+                        {% with index=forloop.counter %}
+                            {% partial user_row %}
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

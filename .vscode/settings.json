@@ -1,0 +1,13 @@
+{
+    "python.testing.pytestArgs": [
+        "runtogether",
+        "-s"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "ruff.format.enable": true,
+    "ruff.lint.enable": true,
+    "ruff.exclude": ["templates/**"]
+}
