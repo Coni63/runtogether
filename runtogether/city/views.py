@@ -10,13 +10,11 @@ def city_autocomplete(request):
     if len(query) < 2:  # Minimum 2 caractères
         return JsonResponse({"results": []})
 
-    # Nettoyer l'input utilisateur
     clean_query = unidecode(query.lower())
 
-    # Recherche optimisée avec LIMIT
-    cities = City.objects.filter(
-        clean_name__istartswith=clean_query  # istartswith est plus rapide que icontains
-    ).values("id", "name")[:20]  # Limiter à 20 résultats
+    cities = (
+        City.objects.filter(clean_name__istartswith=clean_query).order_by("-population").values("id", "name", "country")[:20]
+    )
 
-    results = [{"id": c["id"], "text": c["name"]} for c in cities]
+    results = [{"id": c["id"], "name": c["name"], "country": c["country"]} for c in cities]
     return JsonResponse({"results": results})

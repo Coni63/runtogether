@@ -41,6 +41,9 @@ class Command(BaseCommand):
     GEONAMES_URL = "https://download.geonames.org/export/dump/cities500.zip"
     EXPECTED_FILENAME = "cities500.txt"
 
+    def add_arguments(self, parser):
+        parser.add_argument("--force", action="store_true", help="Force complete refresh of all cities")
+
     def handle(self, *args, **options):
         # Download the ZIP file
         self.stdout.write("Downloading GeoNames dataset...")
@@ -86,6 +89,7 @@ class Command(BaseCommand):
                 latitude = line[4]
                 longitude = line[5]
                 country = line[8]
+                population = int(line[14])
                 last_modified = datetime.strptime(line[18], "%Y-%m-%d").date()
 
                 if len(name) > 60 or len(clean_name) > 60:
@@ -100,11 +104,12 @@ class Command(BaseCommand):
                     longitude=longitude,
                     country=country,
                     last_modified=last_modified,
+                    population=population,
                 )
 
                 if geonameid not in existing_cities:
                     to_create.append(city_obj)
-                elif last_modified > existing_cities[geonameid]:
+                elif last_modified > existing_cities[geonameid] or options["force"]:
                     to_update.append(city_obj)
             except (IndexError, ValueError):
                 continue
@@ -118,7 +123,9 @@ class Command(BaseCommand):
         if to_update:
             self.stdout.write(f"Updating {len(to_update)} cities...")
             City.objects.bulk_update(
-                to_update, ["name", "clean_name", "latitude", "longitude", "country", "last_modified"], batch_size=5000
+                to_update,
+                ["name", "clean_name", "latitude", "longitude", "country", "last_modified", "population"],
+                batch_size=5000,
             )
 
         self.stdout.write(self.style.SUCCESS(f"Done! Created: {len(to_create)}, Updated: {len(to_update)}"))

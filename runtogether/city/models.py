@@ -9,6 +9,7 @@ class City(models.Model):
     latitude = models.DecimalField(max_digits=7, decimal_places=5, null=False, blank=False)
     longitude = models.DecimalField(max_digits=8, decimal_places=5, null=False, blank=False)
     country = models.CharField(max_length=2, null=False, blank=False)
+    population = models.BigIntegerField(default=0)
     last_modified = models.DateField(null=False, blank=False)
 
     class Meta:
