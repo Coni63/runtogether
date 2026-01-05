@@ -5,6 +5,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 import requests
 from city.models import City
+from django.contrib.gis.geos import Point
 
 
 class Command(BaseCommand):
@@ -40,6 +41,7 @@ class Command(BaseCommand):
 
     GEONAMES_URL = "https://download.geonames.org/export/dump/cities500.zip"
     EXPECTED_FILENAME = "cities500.txt"
+    ALLOWED_COUNTRIES = ["FR", "LU", "BE", "DE", "CH", "IT", "ES"]
 
     def add_arguments(self, parser):
         parser.add_argument("--force", action="store_true", help="Force complete refresh of all cities")
@@ -96,12 +98,16 @@ class Command(BaseCommand):
                     print(f"Skip: {name}")
                     continue
 
+                if country not in self.ALLOWED_COUNTRIES:
+                    continue
+
                 city_obj = City(
                     id=geonameid,
                     name=name,
                     clean_name=clean_name,
                     latitude=latitude,
                     longitude=longitude,
+                    location=Point(float(longitude), float(latitude)),
                     country=country,
                     last_modified=last_modified,
                     population=population,
