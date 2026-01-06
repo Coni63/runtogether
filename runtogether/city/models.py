@@ -24,3 +24,9 @@ class City(models.Model):
         if self.longitude and self.latitude:
             self.location = Point(float(self.longitude), float(self.latitude))
         super().save(*args, **kwargs)
+
+    def __repr__(self):
+        return f"<City {self.name} ({self.country})>"
+
+    def __str__(self):
+        return self.name

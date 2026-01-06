@@ -1,3 +1,34 @@
 from django.db import models
+from django.contrib.gis.db import models as geomodels
 
-# Create your models here.
+RACE_TYPE = (
+    ("trail", "Trail"),
+    ("road", "Road"),
+)
+
+INSCRIPTION_TYPE = (
+    ("not_open", "Inscriptions non ouvertes"),
+    ("open", "Inscriptions en cours"),
+    ("closed", "Inscriptions terminées"),
+    ("terminated", "Course terminée"),
+)
+
+
+class Race(models.Model):
+    name = models.CharField(max_length=500, null=False, blank=False, help_text="Name of the race")
+    date_course = models.DateField(null=False, blank=False, help_text="Date of the race")
+    date_validated = models.BooleanField(default=False, help_text="Indicates if the race date is confirmed")
+    inscription_status = models.CharField(max_length=10, null=True, blank=True, choices=INSCRIPTION_TYPE)
+    date_inscriptions_open = models.DateField(null=True, blank=True, help_text="Date when inscriptions open")
+    city = models.CharField(max_length=60, null=True, blank=True, help_text="City where the race takes place")
+    longitude = models.DecimalField(max_digits=8, decimal_places=5, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=7, decimal_places=5, null=True, blank=True)
+    location = geomodels.PointField(geography=True, srid=4326, null=True, blank=True)  # srid 4326 = WGS84
+    race_type = models.CharField(max_length=5, null=True, blank=True, choices=RACE_TYPE)
+    private = models.BooleanField(default=False, help_text="Indicates if the race is limited to a specific club")
+    club_owner = models.ForeignKey(
+        "club.Club", null=True, blank=True, on_delete=models.SET_NULL, related_name="races", help_text="Club that owns the race"
+    )
+    url_race = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the race")
+    url_inscriptions = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the inscriptions")
+    distance = models.JSONField(null=True, blank=True, help_text="List of distances in kilometers")

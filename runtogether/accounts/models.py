@@ -3,23 +3,13 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
-
-
-# class UserProjectPermissions(models.Model):
-#     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="permissions")
-#     project = models.ForeignKey("projects.Project", on_delete=models.CASCADE, related_name="permissions")
-
-
-#     class Meta:
-#         unique_together = ("user", "project")
-
-#     def __str__(self):
-#         if self.is_admin:
-#             return f"{self.user.email} / {self.project.name} : RWA"
-#         elif self.can_edit:
-#             return f"{self.user.email} / {self.project.name} : RW-"
-#         elif self.can_view:
-#             return f"{self.user.email} / {self.project.name} : R--"
-#         else:
-#             return f"{self.user.email} / {self.project.name} : ---"
+    strava_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the user's Strava profile")
+    garmin_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the user's Garmin profile")
+    city = models.ForeignKey(
+        "city.City",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="residents",
+        help_text="City where the user resides",
+    )
