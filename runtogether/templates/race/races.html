@@ -28,7 +28,7 @@
                     <td>{{ race.city.country }}</td>
                     <td>
                         {% if race.distance_from_user %}
-                            {{ race.distance_from_user|floatformat:1 }} km
+                            {{ race.distance_from_user.km|floatformat:1 }} km
                         {% else %}
                             N/A
                         {% endif %}

@@ -2,21 +2,26 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, QuerySet
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
+from django.db.models import Value, FloatField
+from city.models import City
 from .models import Race
 
 User = get_user_model()
 
 
-def get_races_around_user(user: User, radius: int | None = None) -> QuerySet[Race]:
-    """
-    Return races around the user city.
-    If the user has no city, it returns all races.
-    If a radius is provided, it returns races within that radius of the user's city.
-    """
-    if user.is_authenticated and hasattr(user, "city") and user.city and user.city.location and radius:
-        return (
-            Race.objects.annotate(distance_from_user=Distance("city__location", user.city.location))
-            .filter(distance_from_user__lte=D(km=radius))
-            .order_by("distance_from_user")
-        )
-    return Race.objects.all()
+def get_races_around_position(user: User, center: City, radius: int | None = None) -> QuerySet[Race]:
+    qs = Race.objects.all()
+    print(center.location)
+    if center.location:
+        qs = qs.annotate(distance_from_user=Distance("city__location", center.location))
+    else:
+        qs = qs.annotate(distance_from_user=Value(0.0, output_field=FloatField()))
+
+    if radius:
+        qs = qs.filter(distance_from_user__lte=D(km=radius).m)
+
+    return qs.order_by("distance_from_user")
+
+
+def get_all_races() -> QuerySet[Race]:
+    return Race.objects.all().annotate(distance_from_user=Value(0.0, output_field=FloatField()))
