@@ -4,7 +4,46 @@
 {% block title %}Races - Run Together{% endblock %}
 {% block content %}
 
-Races
+<div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold my-4">Races</h1>
+
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>City</th>
+                    <th>Country</th>
+                    <th>Distance from you</th>
+                    <th>Distances</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for race in races %}
+                <tr>
+                    <td>{{ race.name }}</td>
+                    <td>{{ race.date|date:'d/m/Y' }}</td>
+                    <td>{{ race.city }}</td>
+                    <td>{{ race.city.country }}</td>
+                    <td>
+                        {% if race.distance_from_user %}
+                            {{ race.distance_from_user|floatformat:1 }} km
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for distance in race.distance %}
+                            <div class="badge badge-primary mr-2">{{ distance }} km</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}
 
