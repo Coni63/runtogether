@@ -14,6 +14,13 @@ from city.models import City
 class Command(BaseCommand):
     help = "Populate the table using a csv manually created"
 
+    label = {
+        "Inscriptions non ouvertes": "not_open",
+        "Inscriptions en cours": "open",
+        "Inscriptions terminées": "closed",
+        "Course terminée": "terminated",
+    }
+
     def add_arguments(self, parser):
         parser.add_argument("--force", action="store_true", help="Force complete refresh of all races")
 
@@ -26,11 +33,10 @@ class Command(BaseCommand):
         to_update = []
 
         self.stdout.write("Loading data...")
-        with open("data/Courses 2026 - Courses.csv", "r") as f:
+        with open("data/Courses 2026 - Courses.csv", "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             next(reader)  # Skip header line
             for i, line in enumerate(reader):
-                print(line)
                 try:
                     date_str = line[1]
 
@@ -39,27 +45,23 @@ class Command(BaseCommand):
                     if not course:
                         continue
 
+                    # print(line)
                     date_course = datetime.strptime(date_str, "%d/%m/%Y").date()
                     date_validated = not date_str.startswith("01")
-                    inscription_status = line[2]
+                    inscription_status = self.label[line[2]]
                     date_inscriptions_open = datetime.strptime(line[3], "%d/%m/%Y").date() if line[3] else None
                     city = line[4]
                     race_type = line[5]
-                    private = False
                     distance = [Decimal(d.strip().replace(",", ".")) for d in line[6].split("-")] if line[6] else []
                     url_race = line[7]
                     url_inscriptions = line[8]
 
-                    qs = City.objects.filter(name__istartswith=city)
-                    print(qs.first())
-                    city_record = qs.first().name if qs.exists() else None
-                    if city_record:
-                        latitude = city_record.latitude
-                        longitude = city_record.longitude
-                    else:
-                        latitude = None
-                        longitude = None
+                    qs = City.objects.filter(name=city)
 
+                    if not qs.exists():
+                        raise AttributeError
+
+                    city_record = qs.first()
                     obj = Race(
                         id=i,
                         name=course,
@@ -67,12 +69,13 @@ class Command(BaseCommand):
                         date_validated=date_validated,
                         inscription_status=inscription_status,
                         date_inscriptions_open=date_inscriptions_open,
-                        city=city,
-                        latitude=latitude,
-                        longitude=longitude,
-                        location=Point(longitude, latitude),
+                        city=city_record,
+                        latitude=city_record.latitude,
+                        longitude=city_record.longitude,
+                        location=city_record.location,
                         race_type=race_type,
-                        private=private,
+                        private=False,
+                        club_owner=None,
                         url_race=url_race,
                         url_inscriptions=url_inscriptions,
                         distance=distance,
@@ -86,8 +89,6 @@ class Command(BaseCommand):
                     continue
                 except AttributeError:
                     self.stdout.write(self.style.WARNING(f"City '{city}' not found in database."))
-
-            return
 
             # Bulk Create
             if to_create:

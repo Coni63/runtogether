@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models as geomodels
+from django.contrib.postgres.fields import ArrayField
 
 RACE_TYPE = (
     ("trail", "Trail"),
@@ -20,7 +21,14 @@ class Race(models.Model):
     date_validated = models.BooleanField(default=False, help_text="Indicates if the race date is confirmed")
     inscription_status = models.CharField(max_length=10, null=True, blank=True, choices=INSCRIPTION_TYPE)
     date_inscriptions_open = models.DateField(null=True, blank=True, help_text="Date when inscriptions open")
-    city = models.CharField(max_length=60, null=True, blank=True, help_text="City where the race takes place")
+    city = models.ForeignKey(
+        "city.City",
+        null=False,
+        blank=False,
+        on_delete=models.DO_NOTHING,
+        help_text="City where the race takes place",
+        related_name="races",
+    )
     longitude = models.DecimalField(max_digits=8, decimal_places=5, null=True, blank=True)
     latitude = models.DecimalField(max_digits=7, decimal_places=5, null=True, blank=True)
     location = geomodels.PointField(geography=True, srid=4326, null=True, blank=True)  # srid 4326 = WGS84
@@ -31,4 +39,10 @@ class Race(models.Model):
     )
     url_race = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the race")
     url_inscriptions = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the inscriptions")
-    distance = models.JSONField(null=True, blank=True, help_text="List of distances in kilometers")
+    distance = ArrayField(
+        base_field=models.FloatField(),
+        size=None,  # or a fixed size like 128
+        default=list,
+        blank=True,
+        help_text="List of distances in kilometers",
+    )

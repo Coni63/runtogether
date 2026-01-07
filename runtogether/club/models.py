@@ -10,10 +10,10 @@ class Club(models.Model):
     members = models.ManyToManyField("accounts.User", through="club.ClubMembership", related_name="clubs")
     city = models.ForeignKey(
         "city.City",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="residents",
+        null=False,
+        blank=False,
+        on_delete=models.DO_NOTHING,
+        related_name="clubs",
         help_text="City where the user resides",
     )
 
