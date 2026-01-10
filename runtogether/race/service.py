@@ -19,7 +19,7 @@ def get_races_around_position(center: City, radius: int | None = None) -> QueryS
     if radius:
         qs = qs.filter(distance_from_user__lte=D(km=radius).m)
 
-    return qs.order_by("distance_from_user")
+    return qs.order_by("date_course", "distance_from_user")
 
 
 def get_all_races() -> QuerySet[Race]:

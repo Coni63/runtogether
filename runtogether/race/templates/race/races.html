@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static tailwind_filters tailwind_tags %}
-
+{% load race_tags %}
 {% block title %}Races - Run Together{% endblock %}
 {% block content %}
 
@@ -14,29 +14,57 @@
                     <th>Name</th>
                     <th>Date</th>
                     <th>City</th>
-                    <th>Country</th>
-                    <th>Distance from you</th>
+                    <th>Inscription</th>
+                    <th>Type</th>
                     <th>Distances</th>
+                    <th>Site</th>
+                    <th>Inscription</th>
                 </tr>
             </thead>
             <tbody>
                 {% for race in races %}
                 <tr>
                     <td>{{ race.name }}</td>
-                    <td>{{ race.date|date:'d/m/Y' }}</td>
-                    <td>{{ race.city }}</td>
-                    <td>{{ race.city.country }}</td>
                     <td>
-                        {% if race.distance_from_user %}
-                            {{ race.distance_from_user.km|floatformat:1 }} km
+                        {% if race.date_validated %}
+                            {{ race.date_course|date:'d/m/Y' }}
                         {% else %}
-                            N/A
+                            ~{{ race.date_course|date:'M Y' }}
                         {% endif %}
+                    </td>
+                    <td>
+                        {{ race.city }}
+                        {% if race.distance_from_user %}
+                            ({{ race.distance_from_user.km|floatformat:1 }} km)
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% status_chip race.inscription_status %}
+                        {% if race.date_inscriptions_open %}
+                            {{ race.date_inscriptions_open|date:'d/m/Y' }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% race_type_chip race.race_type %}
                     </td>
                     <td>
                         {% for distance in race.distance %}
                             <div class="badge badge-primary mr-2">{{ distance }} km</div>
                         {% endfor %}
+                    </td>
+                    <td>
+                        {% if race.url_race %}
+                            <a href="{{ race.url_race }}" title="Link">
+                                Info <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if race.url_inscriptions %}
+                            <a href="{{ race.url_inscriptions }}" title="Link">
+                                Register <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
