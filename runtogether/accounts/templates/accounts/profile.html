@@ -55,6 +55,9 @@
                         {% endif %}
                     </div>
 
+                    {{ form.strava_url|as_crispy_field }}
+                    {{ form.garmin_url|as_crispy_field }}
+
                     {# Champ masqué pour l'utilisateur, généralement l'identifiant, si besoin #}
                     {# <input type="hidden" name="user_id" value="{{ user.id }}"> #}
 

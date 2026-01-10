@@ -32,7 +32,7 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "city"]
+        fields = ["first_name", "last_name", "city", "strava_url", "garmin_url"]
 
         widgets = {
             "first_name": forms.TextInput(
@@ -47,15 +47,29 @@ class UserEditForm(forms.ModelForm):
                 }
             ),
             "city": forms.HiddenInput(),
+            "strava_url": forms.URLInput(
+                attrs={
+                    "placeholder": "Enter your Strava profile URL",
+                }
+            ),
+            "garmin_url": forms.URLInput(
+                attrs={
+                    "placeholder": "Enter your Garmin profile URL",
+                }
+            ),
         }
 
         labels = {
             "first_name": "First Name",
             "last_name": "Last Name",
             "city": "City",
+            "strava_url": "Strava Profile URL",
+            "garmin_url": "Garmin Profile URL",
         }
 
         help_texts = {
             "first_name": None,
             "last_name": None,
+            "strava_url": None,
+            "garmin_url": None,
         }
