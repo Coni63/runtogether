@@ -2502,6 +2502,9 @@
   .h-full {
     height: 100%;
   }
+  .max-h-60 {
+    max-height: calc(var(--spacing) * 60);
+  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -2587,6 +2590,26 @@
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
+  @layer daisyui.l1.l2.l3 {
+    .link {
+      cursor: pointer;
+      text-decoration-line: underline;
+    }
+    .link:focus {
+      --tw-outline-style: none;
+      outline-style: none;
+    }
+    @media (forced-colors: active) {
+      .link:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+      }
+    }
+    .link:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
   .cursor-pointer {
     cursor: pointer;
   }
@@ -2631,6 +2654,9 @@
   }
   .justify-start {
     justify-content: flex-start;
+  }
+  .gap-0 {
+    gap: calc(var(--spacing) * 0);
   }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
@@ -3481,6 +3507,14 @@
   .text-base-content {
     color: var(--color-base-content);
   }
+  .text-base-content\/60 {
+    color: var(--color-base-content);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-base-content\/60 {
+      color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+    }
+  }
   .text-base-content\/70 {
     color: var(--color-base-content);
   }
@@ -3521,6 +3555,9 @@
   }
   .text-blue-950 {
     color: var(--color-blue-950);
+  }
+  .text-error {
+    color: var(--color-error);
   }
   .text-gray-400 {
     color: var(--color-gray-400);
@@ -3748,6 +3785,22 @@
   }
   .\[diff\:\"\+Math\.abs\(t-e\)\+\"\] {
     diff: "+Math.abs(t-e)+";
+  }
+  .peer-focus\:block:is(:where(.peer):focus ~ *) {
+    display: block;
+  }
+  .empty\:hidden:empty {
+    display: none;
+  }
+  @media (hover: hover) {
+    .hover\:block:hover {
+      display: block;
+    }
+  }
+  @media (hover: hover) {
+    .hover\:bg-base-200:hover {
+      background-color: var(--color-base-200);
+    }
   }
   @media (hover: hover) {
     .hover\:bg-gray-100:hover {

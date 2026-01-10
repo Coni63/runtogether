@@ -40,7 +40,20 @@
                     {% endif %}
 
                     {# Utilisation de crispy_forms pour un rendu facile et stylisé #}
-                    {{ form|crispy }}
+                    {{ form.first_name|as_crispy_field }}
+                    {{ form.last_name|as_crispy_field }}
+                    
+                    <div class="mb-3">
+                        <c-city-field 
+                            name="city" 
+                            label="City"
+                            value="{{ form.instance.city.id|default:'' }}"
+                            display_value="{{ form.instance.city.name|default:'' }}"
+                        />
+                        {% if form.city.errors %}
+                            <p class="text-error text-sm mt-1">{{ form.city.errors.0 }}</p>
+                        {% endif %}
+                    </div>
 
                     {# Champ masqué pour l'utilisateur, généralement l'identifiant, si besoin #}
                     {# <input type="hidden" name="user_id" value="{{ user.id }}"> #}

@@ -1,5 +1,86 @@
-<div class="bg-white shadow rounded border p-4">
-    <h2>{{ title }}</h2>
-    <p>{{ slot }}</p>
-    <button href="">Read more</button>
+<c-vars name value="" display_value="" label="City" />
+
+<div class="city-field-wrapper w-full relative">
+    {% if label %}
+        <label for="{{ name }}_search" class="label">
+            <span class="label-text">{{ label }}</span>
+        </label>
+    {% endif %}
+
+    <input type="hidden" name="{{ name }}" id="{{ name }}" value="{{ value }}" class="city-hidden-input">
+
+    <input type="text"
+           id="{{ name }}_search"
+           class="input input-bordered w-full city-search-input"
+           placeholder="Type at least 3 letters to search..."
+           value="{{ display_value }}"
+           hx-get="{% url 'city:city_autocomplete' %}"
+           hx-trigger="keyup[target.value.length > 2] changed delay:500ms"
+           hx-target="next ul"
+           name="q"
+           autocomplete="off">
+
+    <ul class="absolute z-50 w-full menu p-2 shadow bg-base-100 rounded-box mt-1 max-h-60 overflow-y-auto empty:hidden hidden city-results-list flex-nowrap">
+        {# Results will be loaded here by HTMX. #}
+    </ul>
+
+    <script>
+        (function() {
+            // Robustly find the component elements relative to this script
+            const wrapper = document.currentScript.closest('.city-field-wrapper');
+            if (!wrapper) return;
+
+            const input = wrapper.querySelector('.city-search-input');
+            const hiddenInput = wrapper.querySelector('.city-hidden-input');
+            const results = wrapper.querySelector('.city-results-list');
+
+            if (!input || !hiddenInput || !results) {
+                console.error('City field: Missing required elements.', { input, hiddenInput, results });
+                return;
+            }
+
+            // Show results when HTMX updates the content
+            results.addEventListener('htmx:afterSwap', () => {
+                if (results.children.length > 0) {
+                    results.classList.remove('hidden');
+                } else {
+                    results.classList.add('hidden');
+                }
+            });
+
+            // Handle selection
+            results.addEventListener('click', function(evt) {
+                const link = evt.target.closest('a');
+                if (link) {
+                    evt.preventDefault();
+                    const id = link.getAttribute('data-id');
+                    const name = link.getAttribute('data-name');
+                    
+                    if (id && name) {
+                        hiddenInput.value = id;
+                        input.value = name;
+                        results.classList.add('hidden');
+                        results.innerHTML = ''; // Clear results
+                        
+                        // Trigger change event on hidden input for any listeners
+                        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', function(evt) {
+                if (!wrapper.contains(evt.target)) {
+                    results.classList.add('hidden');
+                }
+            });
+
+            // Re-open on focus if we have results
+            input.addEventListener('focus', function() {
+                if (results.children.length > 0) {
+                     results.classList.remove('hidden');
+                }
+            });
+        })();
+    </script>
 </div>

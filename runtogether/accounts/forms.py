@@ -32,7 +32,7 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name"]
+        fields = ["first_name", "last_name", "city"]
 
         widgets = {
             "first_name": forms.TextInput(
@@ -46,11 +46,13 @@ class UserEditForm(forms.ModelForm):
                     "placeholder": "Enter your last name",
                 }
             ),
+            "city": forms.HiddenInput(),
         }
 
         labels = {
             "first_name": "First Name",
             "last_name": "Last Name",
+            "city": "City",
         }
 
         help_texts = {
