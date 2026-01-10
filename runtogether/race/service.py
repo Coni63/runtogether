@@ -9,9 +9,8 @@ from .models import Race
 User = get_user_model()
 
 
-def get_races_around_position(user: User, center: City, radius: int | None = None) -> QuerySet[Race]:
+def get_races_around_position(center: City, radius: int | None = None) -> QuerySet[Race]:
     qs = Race.objects.all()
-    print(center.location)
     if center.location:
         qs = qs.annotate(distance_from_user=Distance("city__location", center.location))
     else:
