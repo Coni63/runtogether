@@ -21,6 +21,11 @@ class Command(BaseCommand):
         "Course terminée": "terminated",
     }
 
+    map_race_type = {
+        "Trail": "trail",
+        "Route": "road",
+    }
+
     def add_arguments(self, parser):
         parser.add_argument("--force", action="store_true", help="Force complete refresh of all races")
 
@@ -51,10 +56,10 @@ class Command(BaseCommand):
                     inscription_status = self.label[line[2]]
                     date_inscriptions_open = datetime.strptime(line[3], "%d/%m/%Y").date() if line[3] else None
                     city = line[4]
-                    race_type = line[5]
+                    race_type = self.map_race_type[line[5]]
                     distance = [Decimal(d.strip().replace(",", ".")) for d in line[6].split("-")] if line[6] else []
-                    url_race = line[7]
-                    url_inscriptions = line[8]
+                    url_race = line[8]
+                    url_inscriptions = line[9]
 
                     qs = City.objects.filter(name=city)
 
