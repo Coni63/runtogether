@@ -1,12 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.db.models import F, QuerySet
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
 from django.db.models import Value, FloatField
 from city.models import City
 from .models import Race
-
-User = get_user_model()
 
 
 def get_races_around_position(center: City, radius: int | None = None) -> QuerySet[Race]:
