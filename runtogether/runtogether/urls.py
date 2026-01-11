@@ -26,6 +26,7 @@ urlpatterns = [
     path("city/", include("city.urls")),
     path("club/", include("club.urls")),
     path("race/", include("race.urls")),
+    path("relation/", include("relation.urls")),
 ]
 
 if settings.DEBUG:

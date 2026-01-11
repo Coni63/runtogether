@@ -1,0 +1,14 @@
+<span id="favorite-star-{{ race.id }}"
+      hx-post="{% url 'relation:toggle_race_favorite' race.id %}"
+      hx-vals='{"favorited": {{ race.user_favorited|yesno:"false,true" }} }'
+      hx-swap="outerHTML"
+      class="cursor-pointer">
+
+    {% if race.user_favorited %}
+        <i data-lucide="star" class="fill-yellow-400 text-yellow-400"
+           style="width: 16px; height: 16px;"></i>
+    {% else %}
+        <i data-lucide="star"
+           style="width: 16px; height: 16px;"></i>
+    {% endif %}
+</span>

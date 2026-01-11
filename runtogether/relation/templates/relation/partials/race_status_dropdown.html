@@ -1,0 +1,40 @@
+{% load race_tags %}
+<div class="dropdown dropdown-end" id="race-status-{{ race.id }}">
+    <label tabindex="0" class="cursor-pointer m-1">
+        {% user_status_chip race.user_status %}
+    </label>
+    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+        <li>
+            <button hx-post="{% url 'relation:update_race_status' race.id %}" 
+                    hx-vals='{"status": "none"}' 
+                    hx-target="#race-status-{{ race.id }}" 
+                    hx-swap="outerHTML">
+                Aucun
+            </button>
+        </li>
+        <li>
+            <button hx-post="{% url 'relation:update_race_status' race.id %}" 
+                    hx-vals='{"status": "interested"}' 
+                    hx-target="#race-status-{{ race.id }}" 
+                    hx-swap="outerHTML">
+                Intéressé
+            </button>
+        </li>
+        <li>
+            <button hx-post="{% url 'relation:update_race_status' race.id %}" 
+                    hx-vals='{"status": "registered"}' 
+                    hx-target="#race-status-{{ race.id }}" 
+                    hx-swap="outerHTML">
+                Inscrit
+            </button>
+        </li>
+        <li>
+            <button hx-post="{% url 'relation:update_race_status' race.id %}" 
+                    hx-vals='{"status": "search_bib"}' 
+                    hx-target="#race-status-{{ race.id }}" 
+                    hx-swap="outerHTML">
+                Cherche dossard
+            </button>
+        </li>
+    </ul>
+</div>

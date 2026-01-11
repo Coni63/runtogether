@@ -11,6 +11,7 @@
         <table class="table w-full">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Name</th>
                     <th>Date</th>
                     <th>City</th>
@@ -19,11 +20,15 @@
                     <th>Distances</th>
                     <th>Site</th>
                     <th>Inscription</th>
+                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
                 {% for race in races %}
                 <tr>
+                    <td>
+                        {% include "relation/partials/favorite_star.html" %}
+                    </td>
                     <td>{{ race.name }}</td>
                     <td>
                         {% if race.date_validated %}
@@ -65,6 +70,9 @@
                                 Register <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
                             </a>
                         {% endif %}
+                    </td>
+                    <td>
+                        {% include "relation/partials/race_status_dropdown.html" %}
                     </td>
                 </tr>
                 {% endfor %}
