@@ -11,7 +11,7 @@ class RaceUser(models.Model):
 
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="race_links")
     race = models.ForeignKey("race.Race", on_delete=models.CASCADE, related_name="user_links")
-    liked = models.BooleanField(default=False)
+    favorited = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.NONE)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -20,5 +20,5 @@ class RaceUser(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "race"], name="unique_user_race"),
-            models.CheckConstraint(check=Q(liked=True) | ~Q(status="none"), name="must_have_like_or_status"),
+            models.CheckConstraint(condition=Q(favorited=True) | ~Q(status="none"), name="must_have_like_or_status"),
         ]
