@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.gis.geos import Point
 
 RACE_TYPE = (
     ("trail", "Trail"),
@@ -46,3 +47,13 @@ class Race(models.Model):
         blank=True,
         help_text="List of distances in kilometers",
     )
+
+    def save(self, *args, **kwargs):
+        # If location is set, sync longitude and latitude
+        if self.location:
+            self.longitude = self.location.x
+            self.latitude = self.location.y
+        # If location is not set but lon/lat are, create location
+        elif self.longitude is not None and self.latitude is not None:
+            self.location = Point(float(self.longitude), float(self.latitude))
+        super().save(*args, **kwargs)

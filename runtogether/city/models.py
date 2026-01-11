@@ -21,7 +21,12 @@ class City(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        if self.longitude and self.latitude:
+        # If location is set, sync longitude and latitude
+        if self.location:
+            self.longitude = self.location.x
+            self.latitude = self.location.y
+        # If location is not set but lon/lat are, create location
+        elif self.longitude is not None and self.latitude is not None:
             self.location = Point(float(self.longitude), float(self.latitude))
         super().save(*args, **kwargs)
 
