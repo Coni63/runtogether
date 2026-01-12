@@ -32,8 +32,9 @@ def list_races(request):
             races_qs = get_all_races()
 
         # 3. Apply Filters
-        if data.get("race_type"):
-            races_qs = races_qs.filter(race_type=data.get("race_type"))
+        race_types = data.get('race_type')
+        if race_types:
+            races_qs = races_qs.filter(race_type__in=race_types)
 
         if data.get("date_after"):
             races_qs = races_qs.filter(date_course__gte=data.get("date_after"))
