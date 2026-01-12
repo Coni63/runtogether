@@ -1,0 +1,21 @@
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>City</th>
+                    <th>Inscription</th>
+                    <th>Type</th>
+                    <th>Distances</th>
+                    <th>Site</th>
+                    <th>Inscription</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for race in races %}
+                    {% include "race/partials/race_row.html" with race=race %}
+                {% endfor %}
+            </tbody>
+        </table>
