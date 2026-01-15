@@ -47,6 +47,7 @@ class Race(models.Model):
         blank=True,
         help_text="List of distances in kilometers",
     )
+    nightrun = models.BooleanField(default=False, help_text="Indicates if the race is run by night")
 
     def save(self, *args, **kwargs):
         # If location is set, sync longitude and latitude
