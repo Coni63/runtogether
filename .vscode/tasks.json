@@ -18,10 +18,18 @@
             "problemMatcher": []
         },
         {
+            "label": "Start Worker",
+            "type": "shell",
+            "command": "cd runtogether && uv run celery -A runtogether worker --loglevel=info -P solo",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
             "label": "Start App",
             "dependsOn": [
                 "Start Tailwind",
-                "Start Django Server"
+                "Start Django Server",
+                "Start Worker"
             ],
             "dependsOrder": "parallel",
             "problemMatcher": []
