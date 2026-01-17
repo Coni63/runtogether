@@ -27,6 +27,7 @@
         <div class="navbar-center hidden md:flex gap-2">
             <a href="{% url 'race:list' %}" class="btn btn-ghost btn-sm">Races</a>
             <a href="{% url 'club:list' %}" class="btn btn-ghost btn-sm">Clubs</a>
+            <a href="{% url 'planning:planning' %}" class="btn btn-ghost btn-sm">Planning</a>
         </div>
 
         <div class="navbar-end gap-2">
@@ -39,6 +40,7 @@
                 <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 border border-base-300">
                     <li><a href="{% url 'race:list' %}">Races</a></li>
                     <li><a href="{% url 'club:list' %}">Clubs</a></li>
+                    <li><a href="{% url 'planning:planning' %}">Planning</a></li>
                 </ul>
             </div>
 

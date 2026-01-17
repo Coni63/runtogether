@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static tailwind_filters tailwind_tags %}
+
+{% block title %}Planning - Run Together{% endblock %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow">
+    <h1 class="text-2xl font-bold mb-4">Calendar</h1>
+    <div id='calendar'></div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+{% comment %} <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script> {% endcomment %}
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.20/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.20/index.global.min.js'></script>
+<script>
+    // https://fullcalendar.io/docs
+    
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          locale: 'fr',
+          firstDay: 1, // Monday first
+          height: 'auto',
+          selectable: true,
+
+          // URL qui renvoie tes événements (on va la créer après)
+            events: '/planning/events/', 
+            
+            // Style des événements
+            eventDidMount: function(info) {
+                if (info.event.extendedProps.type === 'trail') {
+                    info.el.classList.add('bg-green-500', 'border-none');
+                }
+            },
+
+            dateClick: function(info) {
+                alert('Clicked on: ' + info.dateStr);
+                alert('Current view: ' + info.view.type);
+                // change the day's background color just for fun
+                info.dayEl.style.backgroundColor = 'red';
+            },
+
+            select: function(info) {
+                alert('Clicked on: ' + info.start + " -> " + info.end);
+                alert('Current view: ' + info.view.type);
+                // change the day's background color just for fun
+                //info.dayEl.style.backgroundColor = 'red';
+            }
+        });
+        calendar.render();
+      });
+
+    </script>
+{% endblock %}
+{% block extra_css %}{% endblock %}

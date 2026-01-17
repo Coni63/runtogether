@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     "club",
     "race",
     "relation",
+    "planning",
 ]
 
 MIDDLEWARE = [
