@@ -1,26 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 
 User = get_user_model()
-
-
-class BasicRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Email")
-
-    class Meta:
-        model = User
-        fields = ("email", "username")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Cleanup help text to clean the form
-        self.fields["username"].help_text = ""
-        if "password1" in self.fields:
-            self.fields["password1"].help_text = ""
-        if "password2" in self.fields:
-            self.fields["password2"].help_text = ""
 
 
 class UserEditForm(forms.ModelForm):

@@ -1,19 +1,12 @@
 import logging
 
-from core.exceptions import InvalidParameterError, RecordNotFoundError
-
 # from core.mixins import ProjectAdminRequiredMixin
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic.base import View
-from django_htmx.http import reswap
 
-from .forms import BasicRegisterForm, UserEditForm
-# from .services import AccountService
+from .forms import UserEditForm
 
 User = get_user_model()
 logger = logging.getLogger(__name__)

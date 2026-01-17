@@ -267,5 +267,5 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 
 # Pour que allauth utilise tes formulaires si tu veux garder ton design
 ACCOUNT_FORMS = {
-    "signup": "accounts.forms.BasicRegisterForm",
+    # "signup": "accounts.forms.BasicRegisterForm",
 }
