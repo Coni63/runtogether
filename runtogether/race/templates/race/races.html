@@ -109,8 +109,8 @@
                             <c-city-field 
                                 name="city" 
                                 label="City"
-                                value="{{ form.instance.city.id|default:'' }}"
-                                display_value="{{ form.instance.city.name|default:'' }}"
+                                value="{{ form.city.value|default:'' }}"
+                                display_value="{% if selected_city %}{{ selected_city.name }}{% endif %}"
                             />
                             {% if form.city.errors %}
                                 <p class="text-error text-sm mt-1">{{ form.city.errors.0 }}</p>
