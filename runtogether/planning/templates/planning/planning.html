@@ -37,22 +37,64 @@
                 }
             },
 
-            dateClick: function(info) {
-                alert('Clicked on: ' + info.dateStr);
-                alert('Current view: ' + info.view.type);
-                // change the day's background color just for fun
-                info.dayEl.style.backgroundColor = 'red';
-            },
-
             select: function(info) {
-                alert('Clicked on: ' + info.start + " -> " + info.end);
-                alert('Current view: ' + info.view.type);
-                // change the day's background color just for fun
-                //info.dayEl.style.backgroundColor = 'red';
+                set_absences(info.start, info.end)
             }
         });
         calendar.render();
       });
+
+      function set_absences(dateStart, dateEnd) {
+        const data = {
+            "dateStart": formattedDate(dateStart),
+            "dateEnd": formattedDate(dateEnd),
+            "reason": "Sick"
+        }
+        fetch(`{% url 'planning:set_absences' %}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(data)
+        })
+        .then(_ => {
+            console.log("Sauvegarde réussie:");
+            alert("Diagramme sauvegardé avec succès!");
+        })
+        .catch(error => {
+            console.error("Erreur lors de la sauvegarde:", error);
+            alert("Erreur lors de la sauvegarde du diagramme");
+        });
+      };
+
+      function formattedDate(date) {
+        const yyyy = date.getFullYear();
+        let mm = date.getMonth() + 1; // Months start at 0!
+        let dd = date.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        return yyyy + '-' + mm + '-' + dd;
+      }
+
+    // Fonction helper pour récupérer le token CSRF
+    function getCsrfToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     </script>
 {% endblock %}
