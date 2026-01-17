@@ -4,7 +4,15 @@
     <td>
         {% include "relation/partials/favorite_star.html" %}
     </td>
-    <td>{{ race.name }}</td>
+    <td>
+        {% if race.url_inscriptions %}
+            <a href="{{ race.url_inscriptions }}" title="Link">
+                {{ race.name }} <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
+            </a>
+        {% else %}
+            {{ race.name }}
+        {% endif %}
+    </td>
     <td>
         {% if race.date_validated %}
             {{ race.date_course|date:'d/m/Y' }}
@@ -19,7 +27,7 @@
         {% endif %}
     </td>
     <td>
-        {% status_chip race.inscription_status %}
+        {% status_chip race.inscription_status race.inscription_status %}
         {% if race.date_inscriptions_open %}
             {{ race.date_inscriptions_open|date:'d/m/Y' }}
         {% endif %}
@@ -31,20 +39,6 @@
         {% for distance in race.distance %}
             <div class="badge badge-primary mr-2">{{ distance }} km</div>
         {% endfor %}
-    </td>
-    <td>
-        {% if race.url_race %}
-            <a href="{{ race.url_race }}" title="Link">
-                Info <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
-            </a>
-        {% endif %}
-    </td>
-    <td>
-        {% if race.url_inscriptions %}
-            <a href="{{ race.url_inscriptions }}" title="Link">
-                Register <i data-lucide="external-link" class="cursor-pointer flex gap-2 items-center text-left text-sm font-medium group focus:outline-none focus-visible:border-b" style="width: 16px; height: 16px;"></i>
-            </a>
-        {% endif %}
     </td>
     <td>
         {% include "relation/partials/race_status_dropdown.html" %}

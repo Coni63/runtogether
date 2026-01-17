@@ -23,18 +23,22 @@ USER_STATUS_STYLES = {
 
 
 @register.inclusion_tag("race/tags/status_chip.html")
-def status_chip(value):
+def status_chip(value, url=None):
     config = STATUS_STYLES.get(value, {"class": "bg-gray-400", "label": "Inconnu"})
+    if value == "open":
+        config["url"] = url
     return config
 
 
 @register.inclusion_tag("race/tags/status_chip.html")
-def race_type_chip(value):
+def race_type_chip(value, url=None):
     config = RACE_TYPE_STYLES.get(value, {"class": "bg-gray-400", "label": "Inconnu"})
+    config["url"] = url
     return config
 
 
 @register.inclusion_tag("race/tags/status_chip.html")
-def user_status_chip(value):
+def user_status_chip(value, url=None):
     config = USER_STATUS_STYLES.get(value, {"class": "bg-gray-400", "label": "Aucun"})
+    config["url"] = url
     return config

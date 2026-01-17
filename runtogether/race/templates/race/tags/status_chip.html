@@ -1,3 +1,10 @@
-<span class="rounded-md py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm {{ class }}">
-    {{ label }}
-</span> 
+<span class="inline-flex items-center text-center rounded-md py-1 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm {{ class }}">
+    {% if url %}
+        <a href="{{ url }}" title="Link" class="inline-flex items-center gap-1.5 text-inherit hover:opacity-80 no-underline">
+            {{ label }}
+            <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+        </a>
+    {% else %}
+        {{ label }}
+    {% endif %}
+</span>
