@@ -6,7 +6,7 @@ from accounts.models import User, UserProjectPermissions
 
 @pytest.mark.django_db
 def test_login_view_success(client, user):
-    login_url = reverse("accounts:login")
+    login_url = reverse("account_login")
     response = client.post(
         login_url,
         {"username": user.username, "password": "password"},
@@ -18,7 +18,7 @@ def test_login_view_success(client, user):
     assert response.url == expected_url
 
 
-@pytest.mark.parametrize("url", ["accounts:login", "accounts:register"])
+@pytest.mark.parametrize("url", ["account_login", "account_signup"])
 @pytest.mark.django_db
 def test_redirect_when_authenticated(client, user, url):
     client.login(username=user.username, password="password")
@@ -33,7 +33,7 @@ def test_redirect_when_authenticated(client, user, url):
 
 @pytest.mark.django_db
 def test_login_when_notauthenticated(client, user):
-    login_url = reverse("accounts:login")
+    login_url = reverse("account_login")
     expected_url = reverse("projects:project_list")
 
     response = client.get(login_url)
@@ -53,7 +53,7 @@ def test_login_when_notauthenticated(client, user):
 
 @pytest.mark.django_db
 def test_login_view_invalid_credentials(client, user):
-    login_url = reverse("accounts:login")
+    login_url = reverse("account_login")
     response = client.post(
         login_url,
         {"username": user.username, "password": "wrong"},
@@ -65,7 +65,7 @@ def test_login_view_invalid_credentials(client, user):
 
 @pytest.mark.django_db
 def test_register_view_creates_user(client):
-    register_url = reverse("accounts:register")
+    register_url = reverse("account_signup")
     response = client.post(
         register_url,
         {
@@ -84,7 +84,7 @@ def test_register_view_creates_user(client):
 
 @pytest.mark.django_db
 def test_register_user_already_existing(client, user):
-    register_url = reverse("accounts:register")
+    register_url = reverse("account_signup")
     response = client.post(
         register_url,
         {
@@ -102,7 +102,7 @@ def test_register_user_already_existing(client, user):
 @pytest.mark.django_db
 def test_profile_requires_login(client):
     response = client.get("/accounts/")
-    expected_url = reverse("accounts:login")
+    expected_url = reverse("account_login")
 
     assert response.status_code == 302
     assert response.url.split("?")[0] == expected_url
@@ -117,7 +117,7 @@ def test_profile_update(client, user):
         {"first_name": "Nico", "last_name": "Test"},
     )
 
-    expected_url = reverse("accounts:profile")
+    expected_url = reverse("accounts_:profile")
 
     user.refresh_from_db()
     assert user.first_name == "Nico"
@@ -129,7 +129,7 @@ def test_profile_update(client, user):
 def test_user_permissions_list_denied_for_non_admin(client, user, project):
     client.login(username=user.username, password="password")
 
-    list_permission_url = reverse("accounts:user_permissions_list", kwargs={"project_id": project.id})
+    list_permission_url = reverse("account:user_permissions_list", kwargs={"project_id": project.id})
     response = client.get(list_permission_url)
 
     assert response.status_code == 403
@@ -145,7 +145,7 @@ def test_user_permissions_list(client, admin_user, admin_permission, user, proje
         can_view=True,
     )
 
-    list_permission_url = reverse("accounts:user_permissions_list", kwargs={"project_id": project.id})
+    list_permission_url = reverse("account:user_permissions_list", kwargs={"project_id": project.id})
     response = client.get(list_permission_url)
 
     assert response.status_code == 200
@@ -158,7 +158,7 @@ def test_admin_cannot_delete_own_permission(client, admin_user, admin_permission
     client.login(username=admin_user.username, password="password")
 
     edit_permission_url = reverse(
-        "accounts:user_permissions_update", kwargs={"project_id": project.id, "permission_id": admin_permission.id}
+        "account:user_permissions_update", kwargs={"project_id": project.id, "permission_id": admin_permission.id}
     )
     response = client.delete(edit_permission_url)
 
@@ -193,7 +193,7 @@ def test_admin_creating_user_permissions(client, project, admin_user, admin_perm
     ).exists()
 
     # create it
-    create_permission_url = reverse("accounts:user_permissions_add", kwargs={"project_id": project.id})
+    create_permission_url = reverse("account:user_permissions_add", kwargs={"project_id": project.id})
     data = {
         "user_id": user.id,
     }
@@ -222,7 +222,7 @@ def test_admin_creating_user_permissions_already_present(client, project, admin_
     )
 
     # create it
-    create_permission_url = reverse("accounts:user_permissions_add", kwargs={"project_id": project.id})
+    create_permission_url = reverse("account:user_permissions_add", kwargs={"project_id": project.id})
     data = {
         "user_id": user.id,
     }
@@ -258,7 +258,7 @@ def test_admin_edit_user_permissions(client, project, admin_user, admin_permissi
 
     # create it
     edit_permission_url = reverse(
-        "accounts:user_permissions_update", kwargs={"project_id": project.id, "permission_id": permission.id}
+        "account:user_permissions_update", kwargs={"project_id": project.id, "permission_id": permission.id}
     )
     data = {
         "field_name": role,
@@ -301,7 +301,7 @@ def test_admin_edit_remove_user_permissions(
 
     # create it
     edit_permission_url = reverse(
-        "accounts:user_permissions_update", kwargs={"project_id": project.id, "permission_id": permission.id}
+        "account:user_permissions_update", kwargs={"project_id": project.id, "permission_id": permission.id}
     )
     data = {
         "field_name": role,

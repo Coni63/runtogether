@@ -12,7 +12,7 @@
                 <h1 class="text-4xl font-extrabold text-center mb-2">Welcome Back</h1>
                 <p class="text-center text-base-content/70 mb-8">Sign in to your account</p>
 
-                <form method="POST" action="{% url 'accounts:login' %}" class="space-y-4">
+                <form method="POST" action="{% url 'account_login' %}" class="space-y-4">
                     {% csrf_token %}
                     {{ form|crispy }}
 

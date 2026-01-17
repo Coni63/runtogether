@@ -54,7 +54,7 @@
                         <span class="font-semibold text-base-content">{{ user.username }}</span>
                     </li>
                     <li>
-                        <a href="{% url 'accounts:profile' %}" class="flex items-center gap-2">
+                        <a href="{% url 'user:profile' %}" class="flex items-center gap-2">
                             <span><i data-lucide="user-round-pen" style="width:16px;height:16px;"></i></span>
                             <span>Profile</span>
                         </a>
@@ -69,7 +69,7 @@
                     {% endif %}
                     <li class="border-t border-base-300 mt-2"></li>
                     <li>
-                        <form method="post" action="{% url 'accounts:logout' %}">
+                        <form method="post" action="{% url 'account_logout' %}">
                             {% csrf_token %}
                             <button type="submit" class="flex items-center gap-2 w-full">
                                 <span><i data-lucide="log-out" style="width:16px;height:16px;"></i></span>
@@ -82,10 +82,10 @@
         </div>
     {% else %}
         <div class="navbar-end gap-2">
-            <a href="{% url 'accounts:login' %}" class="btn btn-primary">
+            <a href="{% url 'account_login' %}" class="btn btn-primary">
                 Login
             </a>
-            <a href="{% url 'accounts:register' %}" class="btn btn-primary">
+            <a href="{% url 'account_signup' %}" class="btn btn-primary">
                 Register
             </a>
         </div>

@@ -19,40 +19,6 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("home:homepage")
-
-    if request.method == "GET":
-        form = AuthenticationForm()
-        return render(request, "accounts/login.html", {"form": form})
-    else:
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect("home:homepage")
-        else:
-            return render(request, "accounts/login.html", {"form": form})
-
-
-def register_view(request):
-    if request.user.is_authenticated:
-        return redirect("home:homepage")
-
-    if request.method == "POST":
-        form = BasicRegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect("home:homepage")
-        else:
-            return render(request, "accounts/register.html", {"form": form})
-    else:
-        form = BasicRegisterForm()
-        return render(request, "accounts/register.html", {"form": form})
-
-
 @login_required  # Ensures only logged-in users can access this view
 def my_profile(request):
     if request.method == "POST":
@@ -60,7 +26,7 @@ def my_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Update saved !")
-            return redirect("accounts:profile")
+            return redirect("user:profile")
         else:
             messages.warning(request, "Invalid form")
             # If the form is NOT valid, fall through to render the template with errors

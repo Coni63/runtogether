@@ -66,10 +66,18 @@ INSTALLED_APPS = [
     "theme",
     "crispy_forms",
     "crispy_tailwind",
-    "widget_tweaks",
     "django_htmx",
     "django_cotton",
+    "allauth_ui",
     "anymail",
+    "allauth",
+    "allauth.account",
+    # "allauth.socialaccount",
+    # "allauth.socialaccount.providers.google",
+    # "allauth.socialaccount.providers.facebook",
+    # "allauth.socialaccount.providers.strava",
+    "widget_tweaks",
+    "slippers",
     "home",
     "core",
     "accounts",
@@ -90,6 +98,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "core.middleware.HTMXMessagesMiddleware",
 ]
 
@@ -137,6 +146,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
@@ -228,3 +242,30 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    # 'google': {
+    #     'APP': {
+    #         'client_id': '123',
+    #         'secret': '456',
+    #         'key': ''
+    #     }
+    # }
+}
+
+ALLAUTH_UI_THEME = "light"
+
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Ou 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # L'utilisateur ne pourra pas se logguer sans valider
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # Valide dès le clic (plus simple pour l'user)
+
+# Redirections
+LOGIN_REDIRECT_URL = "home:homepage"
+ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
+
+# Pour que allauth utilise tes formulaires si tu veux garder ton design
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.BasicRegisterForm",
+}
