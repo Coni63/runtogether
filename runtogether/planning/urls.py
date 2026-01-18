@@ -12,7 +12,7 @@ urlpatterns = [
     ),
     path(
         "events/",
-        views.get_calendar_events,
+        views.get_user_calendar_events,
         name="events",
     ),
     path("set_absences", views.set_absences_view, name="set_absences"),
