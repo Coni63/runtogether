@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -67,9 +66,7 @@ class Migration(migrations.Migration):
                 ("is_active", models.BooleanField(default=True)),
                 (
                     "club",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="club.club"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="club.club"),
                 ),
                 (
                     "user",

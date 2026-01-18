@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.geos import Point
 from django.contrib.postgres.indexes import GinIndex
+from django.db import models
 
 
 class City(models.Model):

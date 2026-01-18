@@ -1,8 +1,8 @@
 import logging
-from django.core.mail import send_mail
-from django.tasks import task
-from celery import shared_task
 import time
+
+from celery import shared_task
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
 

@@ -1,15 +1,29 @@
-from django.db.models import F, QuerySet
-from django.contrib.gis.measure import D
-from django.contrib.gis.db.models.functions import Distance
-from django.db.models import Value, FloatField
-from city.models import City
-from .models import RaceUser
+import datetime
+
 from accounts.models import User
+from django.db.models import QuerySet
 from race.models import Race
+
+from .models import RaceUser
 
 
 def get_liked_races(user: User) -> QuerySet[RaceUser]:
     qs = RaceUser.objects.filter(liked=True, user=user)
+    return qs
+
+
+def get_race_for_user(user: User, date_start: datetime.date, date_end: datetime.date) -> QuerySet[RaceUser]:
+    qs = (
+        RaceUser.objects.filter(
+            user=user,
+            race__date_course__gte=date_start,
+            race__date_course__lt=date_end,
+            race__date_validated=True,
+        )
+        .exclude(status="none")  # ignore favorited races with no real inscription
+        .select_related("race")
+    )
+
     return qs
 
 

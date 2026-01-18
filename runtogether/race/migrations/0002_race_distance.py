@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("race", "0001_initial"),
     ]
@@ -13,8 +12,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="race",
             name="distance",
-            field=models.JSONField(
-                blank=True, help_text="List of distances in kilometers", null=True
-            ),
+            field=models.JSONField(blank=True, help_text="List of distances in kilometers", null=True),
         ),
     ]

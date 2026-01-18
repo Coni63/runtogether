@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -62,9 +61,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 "constraints": [
-                    models.UniqueConstraint(
-                        fields=("user", "race"), name="unique_user_race"
-                    ),
+                    models.UniqueConstraint(fields=("user", "race"), name="unique_user_race"),
                     models.CheckConstraint(
                         condition=models.Q(
                             ("favorited", True),

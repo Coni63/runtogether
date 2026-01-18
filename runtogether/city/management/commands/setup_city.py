@@ -2,10 +2,12 @@ import csv
 import io
 import zipfile
 from datetime import datetime
-from django.core.management.base import BaseCommand
+
 import requests
-from city.models import City
 from django.contrib.gis.geos import Point
+from django.core.management.base import BaseCommand
+
+from city.models import City
 
 
 class Command(BaseCommand):

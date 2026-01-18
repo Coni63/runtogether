@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []
@@ -50,21 +49,15 @@ class Migration(migrations.Migration):
                 ("city", models.CharField(blank=True, max_length=60, null=True)),
                 (
                     "longitude",
-                    models.DecimalField(
-                        blank=True, decimal_places=5, max_digits=8, null=True
-                    ),
+                    models.DecimalField(blank=True, decimal_places=5, max_digits=8, null=True),
                 ),
                 (
                     "latitude",
-                    models.DecimalField(
-                        blank=True, decimal_places=5, max_digits=7, null=True
-                    ),
+                    models.DecimalField(blank=True, decimal_places=5, max_digits=7, null=True),
                 ),
                 (
                     "location",
-                    django.contrib.gis.db.models.fields.PointField(
-                        blank=True, geography=True, null=True, srid=4326
-                    ),
+                    django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
                 ),
                 (
                     "race_type",

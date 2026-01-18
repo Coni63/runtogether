@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_POST
 from race.models import Race
+
 from .models import RaceUser
-from .services import set_favorited, remove_favorited, set_status
+from .services import remove_favorited, set_favorited, set_status
 
 
 @login_required

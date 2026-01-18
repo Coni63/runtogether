@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("city", "0003_city_population"),
     ]
@@ -14,8 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="city",
             name="location",
-            field=django.contrib.gis.db.models.fields.PointField(
-                blank=True, geography=True, null=True, srid=4326
-            ),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
         ),
     ]

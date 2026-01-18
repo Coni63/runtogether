@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("race", "0004_alter_race_distance"),
     ]
@@ -13,8 +12,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="race",
             name="nightrun",
-            field=models.BooleanField(
-                default=False, help_text="Indicates if the race is run by night"
-            ),
+            field=models.BooleanField(default=False, help_text="Indicates if the race is run by night"),
         ),
     ]

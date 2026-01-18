@@ -1,13 +1,15 @@
+import contextlib
 import datetime
 import json
-from django.db import IntegrityError
-from django.shortcuts import render
-from django.http import JsonResponse
+
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.http import require_POST
-from .models import Absence
-from .services import set_or_update_absences, get_absences, remove_absences
-import contextlib
+from race.models import Race
+from relation.services import get_race_for_user
+
+from .services import get_absences, remove_absences, set_or_update_absences
 
 
 def __to_date(dt: str) -> datetime.date:
@@ -80,57 +82,39 @@ def remove_absences_view(request):
 
 
 @login_required
-def get_calendar_events(request):
+def get_user_calendar_events(request):
     user = request.user
 
     start = __to_date(request.GET.get("start")[:10])
     end = __to_date(request.GET.get("end")[:10])
 
-    result = [
-        {
-            "id": 1,
-            "title": "Indisponible",
-            "start": "2026-01-05",
-            "end": "2026-01-08",
-            "display": "background",
-            "color": "#c5c5c5",
-        },
-        {"id": 2, "title": "Indisponible", "start": "2026-01-20", "display": "background", "color": "#c5c5c5"},
-        {
-            "id": 3,
-            "title": "10km de Paris (Route)",
-            "start": "2026-01-11",
-            "backgroundColor": "#2563eb",
-            "borderColor": "#1d4ed8",
-            "extendedProps": {"type": "route", "distance": "10km"},
-        },
-        {
-            "id": 4,
-            "title": "Trail des Sapins",
-            "start": "2026-01-25",
-            "backgroundColor": "#059669",
-            "borderColor": "#047857",
-            "extendedProps": {"type": "trail", "distance": "25km"},
-        },
-        {
-            "id": 4,
-            "title": "Semi du Mans",
-            "start": "2026-01-25",
-            "backgroundColor": "#2563eb",
-            "borderColor": "#1d4ed8",
-            "extendedProps": {"type": "route", "distance": "21km"},
-        },
-    ]
+    result = []
 
     absences = get_absences(user, start, end)
     for absence in absences:
         result.append(
             {
-                "id": 4,
+                "id": f"absence_{absence.id}",
                 "title": absence.reason,
                 "start": absence.date.strftime("%Y-%m-%d"),
                 "backgroundColor": "#c5c5c5",
                 "display": "background",
+            }
+        )
+
+    subscriptions = get_race_for_user(user, start, end)
+    for subscription in subscriptions:
+        race: Race = subscription.race
+        result.append(
+            {
+                "id": f"race_{race.id}",
+                "title": race.name,
+                "start": race.date_course,
+                "backgroundColor": "#059669" if race.race_type == "trail" else "#2563eb",
+                "borderColor": "#047857" if race.race_type == "trail" else "#1d4ed8",
+                "extendedProps": {
+                    "status": subscription.status,
+                },
             }
         )
 

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from city.models import City
 from django.core.paginator import Paginator
 from django.db.models.expressions import RawSQL
-from city.models import City
-from .models import Race
+from django.shortcuts import render
+
 from .forms import RaceFilterForm
-from .service import get_races_around_position, get_all_races
+from .models import Race
+from .service import get_all_races, get_races_around_position
 
 
 def list_races(request):

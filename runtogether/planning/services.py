@@ -1,7 +1,8 @@
 import datetime
 
-from planning.models import Absence
 from accounts.models import User
+
+from planning.models import Absence
 
 
 def __generate_list_of_dates(date_start: datetime.date, date_end: datetime.date):

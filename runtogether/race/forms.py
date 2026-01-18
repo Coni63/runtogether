@@ -1,6 +1,7 @@
-from django import forms
 from datetime import date
+
 from dateutil.relativedelta import relativedelta  # pip install python-dateutil
+from django import forms
 
 from .models import RACE_TYPE
 

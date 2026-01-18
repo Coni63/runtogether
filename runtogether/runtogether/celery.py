@@ -1,4 +1,5 @@
 import os
+
 from celery import Celery
 
 # Définit le module de réglages par défaut de Django

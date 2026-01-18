@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Race
 from django.contrib.gis.admin import GISModelAdmin
+
+from .models import Race
 
 
 @admin.register(Race)

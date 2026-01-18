@@ -1,7 +1,7 @@
 from django.http import JsonResponse
-from django.db.models import Q
 from django.shortcuts import render
 from unidecode import unidecode  # pip install unidecode
+
 from .models import City
 
 

@@ -1,14 +1,11 @@
 import csv
-from decimal import Decimal
-import io
-import zipfile
 from datetime import datetime
-from django.core.management.base import BaseCommand
-import requests
-from race.models import Race
-from django.contrib.gis.geos import Point
+from decimal import Decimal
 
 from city.models import City
+from django.core.management.base import BaseCommand
+
+from race.models import Race
 
 
 class Command(BaseCommand):
@@ -38,7 +35,7 @@ class Command(BaseCommand):
         to_update = []
 
         self.stdout.write("Loading data...")
-        with open("data/Courses 2026 - Courses.csv", "r", encoding="utf-8") as f:
+        with open("data/Courses 2026 - Courses.csv", encoding="utf-8") as f:
             reader = csv.reader(f)
             next(reader)  # Skip header line
             for i, line in enumerate(reader):

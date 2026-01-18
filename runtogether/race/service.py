@@ -1,11 +1,11 @@
-from django.db.models import F, QuerySet, FilteredRelation, Q, Value, CharField, BooleanField
-from django.contrib.gis.measure import D
-from django.contrib.gis.db.models.functions import Distance
-from django.db.models import Value, FloatField
-from city.models import City
-from .models import Race
 from accounts.models import User
+from city.models import City
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
+from django.db.models import BooleanField, CharField, FilteredRelation, FloatField, Q, QuerySet, Value
 from django.db.models.functions import Coalesce
+
+from .models import Race
 
 
 def get_races_around_position(center: City, radius: int | None = None, user: User | None = None) -> QuerySet[Race]:

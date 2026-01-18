@@ -1,7 +1,5 @@
 from django.shortcuts import render
 
-from core.tasks import email_users, addition_lente
-
 
 def list_clubs(request):
     # result = email_users.delay(

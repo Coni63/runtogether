@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("city", "0002_city_city_clean_name_gin_trgm_idx"),
     ]

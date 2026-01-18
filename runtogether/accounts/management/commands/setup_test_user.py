@@ -1,9 +1,5 @@
-import csv
-import io
-import zipfile
-from datetime import datetime
 from django.core.management.base import BaseCommand
-import requests
+
 from accounts.models import User
 
 
