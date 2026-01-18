@@ -43,9 +43,15 @@
 {% endblock %}
 {% block extra_js %}
 {% comment %} <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script> {% endcomment %}
+{% comment %}
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.20/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.20/index.global.min.js'></script>
+{% endcomment %}
+
+<script src="{% static 'js/fullcalendar-core-6.1.20.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar-daygrid-6.1.20.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar-interaction-6.1.20.min.js' %}"></script>
 <script>
     // https://fullcalendar.io/docs
     
