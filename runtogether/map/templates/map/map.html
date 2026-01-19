@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static tailwind_filters tailwind_tags %}
+
+{% block title %}Planning - Run Together{% endblock %}
+
+{% block content %}
+    {% url 'map:get_points' as points_url %}
+    {% include 'map/_map_component.html' with api_url=points_url height='500px' %}
+{% endblock %}

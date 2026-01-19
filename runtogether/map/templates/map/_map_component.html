@@ -1,0 +1,48 @@
+<div id="map" style="height: {{ height|default:'400px' }}"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #map {
+        width: 100%;
+    }
+</style>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialiser la carte
+    // Note: This assumes only one map per page due to id="map"
+    var map = L.map('map').setView([46.8, 2.4], 6); // Centre sur la France
+
+    // Ajouter le fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Récupérer et afficher les points
+    fetch("{{ api_url }}")
+        .then(response => response.json())
+        .then(data => {
+            // Ajouter les points sur la carte
+            L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                    return L.marker(latlng);
+                },
+                onEachFeature: function(feature, layer) {
+                    // Ajouter un popup si tu veux
+                    layer.bindPopup(`Point #${feature.properties.id}`);
+                }
+            }).addTo(map);
+
+            // Ajuster la vue pour voir tous les points
+            if (data.features && data.features.length > 0) {
+                const group = L.featureGroup(
+                    data.features.map(f => 
+                        L.marker([f.geometry.coordinates[1], f.geometry.coordinates[0]])
+                    )
+                );
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+</script>

@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "race",
     "relation",
     "planning",
+    "map",
 ]
 
 MIDDLEWARE = [

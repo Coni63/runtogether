@@ -1,17 +1,25 @@
 from datetime import date
-from city.models import City
-from django.core.paginator import Paginator
-from django.db.models.expressions import RawSQL
 from django.shortcuts import render
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from race.service import get_races_around_position
 from django.contrib.auth.decorators import login_required
-from .forms import RaceFilterForm
-from .models import Race
-from .service import get_races_around_position
+
+from race.forms import RaceFilterForm
+from race.models import Race
 from dateutil.relativedelta import relativedelta
+
+from city.models import City
+
+
+def map_view(request):
+    """Vue qui affiche la carte"""
+    return render(request, "map/map.html")
 
 
 @login_required
-def list_races(request):
+def get_points(request):
     # Determine initial city for the form
     initial_data = {}
     if request.user.is_authenticated and hasattr(request.user, "city") and request.user.city:
@@ -65,18 +73,18 @@ def list_races(request):
             max_distance=data.get("max_distance"),
         )
 
-    # Pagination
-    paginator = Paginator(races_qs, 5)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        "races": page_obj,
-        "form": form,
-        "page_obj": page_obj,
-        "selected_city": center_city,  # Pass the actual city object being used
+    data = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [float(race.longitude), float(race.latitude)]},
+                "properties": {
+                    "id": race.id,
+                    # Ajoute d'autres infos si besoin (nom, description, etc.)
+                },
+            }
+            for race in races_qs
+        ],
     }
-
-    if request.htmx:
-        return render(request, "race/partials/race_list_results.html", context)
-    return render(request, "race/races.html", context)
+    return JsonResponse(data)

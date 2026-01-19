@@ -75,7 +75,12 @@
         transform: translateY(-50%);
         z-index: 1;
     }
+
+    #map {
+        width: 100%;
+    }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 {% endblock %}
 
 
@@ -101,6 +106,7 @@
                           hx-get="{% url 'race:list' %}" 
                           hx-target="#race-list" 
                           hx-trigger="change delay:500ms, submit"
+                          hx-on="htmx:afterRequest: refreshMap()"
                           hx-push-url="true">
                         
                         <!-- City Search -->
@@ -193,6 +199,15 @@
             <div id="race-list">
                 {% include "race/partials/race_list_results.html" %}
             </div>
+            
+            <div
+                id="map"
+                style="height: {{ height|default:'400px' }}"
+                hx-get="{% url 'map:get_points' %}"
+                hx-trigger="htmx:afterRequest from:#filter-form"
+                hx-include="#filter-form"
+                >
+            </div>
         </main>
     </div>
 </div>
@@ -211,19 +226,6 @@
         function updateSlider() {
             let min = parseInt(minInput.value);
             let max = parseInt(maxInput.value);
-
-            // Prevent crossing visually (optional, can be annoying if strict)
-            // But good for logical consistency
-            if (min > max) {
-                // Determine which one was moved? 
-                // Simple logic: if min > max, push the other
-                // But simplified: just swap values for display logic if needed, 
-                // OR enforce strict bounds.
-                // Enforcing strict bounds:
-                // If I am moving min and it goes > max, set min = max
-                // We don't know which one triggered this function easily here without 'this' context,
-                // so we handle it in event listeners.
-            }
 
             const percentMin = (min / minInput.max) * 100;
             const percentMax = (max / maxInput.max) * 100;
@@ -264,6 +266,57 @@
         // Initial update
         updateSlider();
     });
+
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialiser la carte
+    var map = L.map('map').setView([46.8, 2.4], 6); // Centre sur la France
+    
+    // Ajouter le fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Variable pour stocker la couche GeoJSON
+    let geoJsonLayer = null;
+    
+    // Récupérer et afficher les points
+    function refreshMap() {
+        const form = document.getElementById("filter-form");
+        const params = new URLSearchParams(new FormData(form));
+        const base_url = "{% url 'map:get_points' %}";
+        
+        fetch(`${base_url}?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                // Supprimer l'ancienne couche GeoJSON si elle existe
+                if (geoJsonLayer) {
+                    map.removeLayer(geoJsonLayer);
+                }
+                
+                // Ajouter les nouveaux points sur la carte
+                geoJsonLayer = L.geoJSON(data, {
+                    pointToLayer: function(feature, latlng) {
+                        return L.marker(latlng);
+                    },
+                    onEachFeature: function(feature, layer) {
+                        // Ajouter un popup si tu veux
+                        layer.bindPopup(`Point #${feature.properties.id}`);
+                    }
+                }).addTo(map);
+                
+                // Ajuster la vue pour voir tous les points
+                if (data.features && data.features.length > 0) {
+                    map.fitBounds(geoJsonLayer.getBounds().pad(0.1));
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+    
+    // Appeler refreshMap au chargement initial
+    refreshMap();
 </script>
 {% endblock %}
-
