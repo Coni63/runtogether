@@ -1,6 +1,6 @@
 {% load race_tags %}
 
-<tr>
+<tr class="event-item" data-lat="{{ race.latitude }}" data-lng="{{ race.longitude }}" data-name="{{ race.name }}">
     <td>
         {% include "relation/partials/favorite_star.html" %}
     </td>
