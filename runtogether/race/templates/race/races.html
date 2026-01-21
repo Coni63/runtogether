@@ -105,7 +105,6 @@
                           hx-get="{% url 'race:list' %}" 
                           hx-target="#race-list" 
                           hx-trigger="change delay:500ms, submit"
-                          hx-on:htmx:after-request="refreshMap()"
                           hx-push-url="true">
                         
                         <!-- City Search -->
@@ -195,7 +194,7 @@
 
         <!-- Main Content -->
         <main class="lg:col-span-3">
-            <div id="race-list">
+            <div id="race-list"  hx-on::after-swap="refreshMap()">
                 {% include "race/partials/race_list_results.html" %}
             </div>
             {% include "map/map.html" %}
