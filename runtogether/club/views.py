@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from city.models import City
+from .services import get_club, create_club
 
 
 def list_clubs(request):
@@ -16,3 +19,13 @@ def list_clubs(request):
     # print(result.status)  # Devrait être 'PENDING' ou 'SUCCESS'
 
     return render(request, "club/clubs.html")
+
+
+@login_required
+def get_club_details(request, club_id):
+    club = get_club(club_id)
+    if not club:
+        city = City.objects.filter(clean_name="Thionville").first()
+        club = create_club("Test", city)
+
+    return render(request, "club/clubs.html", context={"club": club})

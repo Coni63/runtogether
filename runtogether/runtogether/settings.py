@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "django_editorjs_fields",
 ]
 
 MIDDLEWARE = [
@@ -286,6 +287,5 @@ ACCOUNT_FORMS = {
     # "signup": "accounts.forms.BasicRegisterForm",
 }
 
-WAGTAIL_SITE_NAME = 'Run Together'
-WAGTAILADMIN_BASE_URL = 'http://example.com'
-
+WAGTAIL_SITE_NAME = "Run Together"
+WAGTAILADMIN_BASE_URL = "http://example.com"

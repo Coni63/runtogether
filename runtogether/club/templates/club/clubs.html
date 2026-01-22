@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 {% load static tailwind_filters tailwind_tags %}
+{% load editorjs %}
+
 
 {% block title %}Clubs - Run Together{% endblock %}
 {% block content %}
 
-Clubs
+{% if club %}
+{{ club.description | editorjs}}
+{% else %}
+Club
+{% endif %}
 
 {% endblock %}

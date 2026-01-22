@@ -10,4 +10,9 @@ urlpatterns = [
         views.list_clubs,
         name="list",
     ),
+    path(
+        "<int:club_id>/",
+        views.get_club_details,
+        name="details",
+    ),
 ]

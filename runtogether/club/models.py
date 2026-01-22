@@ -1,16 +1,10 @@
 from django.db import models
-from wagtail.fields import StreamField
-from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
+from django_editorjs_fields import EditorJsJSONField
 
 
 class Club(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
-    description = StreamField([
-        ('heading', blocks.CharBlock(form_classname="title")),
-        ('paragraph', blocks.RichTextBlock()),
-        ('image', ImageChooserBlock()),
-    ], use_json_field=True, blank=True, null=True)
+    description = EditorJsJSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
