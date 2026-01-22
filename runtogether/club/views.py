@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from city.models import City
 from .services import get_club, create_club
+from .forms import ClubForm
 
 
 def list_clubs(request):
@@ -28,4 +29,9 @@ def get_club_details(request, club_id):
         city = City.objects.filter(clean_name="Thionville").first()
         club = create_club("Test", city)
 
-    return render(request, "club/clubs.html", context={"club": club})
+    form = ClubForm(request.POST or None, instance=club)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("club:details", club_id=club.id)
+
+    return render(request, "club/clubs.html", context={"club": club, "form": form})

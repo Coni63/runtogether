@@ -35,6 +35,7 @@ urlpatterns = [
     path("relation/", include("relation.urls")),
     path("planning/", include("planning.urls")),
     path("map/", include("map.urls")),
+    path("editorjs/", include("django_editorjs_fields.urls")),
 ]
 
 if settings.DEBUG:
