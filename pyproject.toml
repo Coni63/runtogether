@@ -23,6 +23,7 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "redis>=7.1.0",
     "unidecode>=1.4.0",
+    "wagtail>=7.2.1",
 ]
 
 

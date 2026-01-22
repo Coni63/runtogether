@@ -89,6 +89,19 @@ INSTALLED_APPS = [
     "relation",
     "planning",
     "map",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
 ]
 
 MIDDLEWARE = [
@@ -101,6 +114,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "core.middleware.HTMXMessagesMiddleware",
 ]
 
@@ -271,3 +285,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 ACCOUNT_FORMS = {
     # "signup": "accounts.forms.BasicRegisterForm",
 }
+
+WAGTAIL_SITE_NAME = 'Run Together'
+WAGTAILADMIN_BASE_URL = 'http://example.com'
+

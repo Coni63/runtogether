@@ -1,13 +1,20 @@
 from django.db import models
+from wagtail.fields import StreamField
+from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
 
 
 class Club(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
-    description = models.JSONField(default=dict)
+    description = StreamField([
+        ('heading', blocks.CharBlock(form_classname="title")),
+        ('paragraph', blocks.RichTextBlock()),
+        ('image', ImageChooserBlock()),
+    ], use_json_field=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
-    members = models.ManyToManyField("accounts.User", through="club.ClubMembership", related_name="clubs")
+    members = models.ManyToManyField("accounts.User", through="relation.ClubMembership", related_name="clubs")
     city = models.ForeignKey(
         "city.City",
         null=False,
@@ -16,18 +23,3 @@ class Club(models.Model):
         related_name="clubs",
         help_text="City where the user resides",
     )
-
-
-class ClubMembership(models.Model):
-    club = models.ForeignKey("club.Club", on_delete=models.CASCADE)
-    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    role = models.CharField(
-        max_length=20,
-        choices=[("admin", "Admin"), ("member", "Member")],
-        default="member",
-    )
-    joined_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        unique_together = ("club", "user")

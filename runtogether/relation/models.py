@@ -22,3 +22,18 @@ class RaceUser(models.Model):
             models.UniqueConstraint(fields=["user", "race"], name="unique_user_race"),
             models.CheckConstraint(condition=Q(favorited=True) | ~Q(status="none"), name="must_have_like_or_status"),
         ]
+
+
+class ClubMembership(models.Model):
+    club = models.ForeignKey("club.Club", on_delete=models.CASCADE)
+    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    role = models.CharField(
+        max_length=20,
+        choices=[("admin", "Admin"), ("member", "Member")],
+        default="member",
+    )
+    joined_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("club", "user")
