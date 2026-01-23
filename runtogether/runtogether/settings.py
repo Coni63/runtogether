@@ -272,6 +272,3 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 ACCOUNT_FORMS = {
     # "signup": "accounts.forms.BasicRegisterForm",
 }
-
-WAGTAIL_SITE_NAME = "Run Together"
-WAGTAILADMIN_BASE_URL = "http://example.com"

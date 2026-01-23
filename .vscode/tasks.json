@@ -46,6 +46,20 @@
             "problemMatcher": []
         },
         {
+            "label": "Dump Data",
+            "type": "shell",
+            "command": "cd runtogether && uv run python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > data.json",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Load Data",
+            "type": "shell",
+            "command": "cd runtogether && uv run python manage.py loaddata data.json",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
             "label": "Start App",
             "dependsOn": [
                 "Start Tailwind",
