@@ -34,3 +34,42 @@
         opacity: 0;
     }
 }
+
+
+
+
+
+/* On cible tout ce qui se trouve à l'intérieur de votre div de contenu */
+.editorjs-content h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.editorjs-content h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-top: 1.2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+/* Sauts de ligne entre les paragraphes */
+.editorjs-content p {
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+}
+
+/* Fix pour l'éditeur de code (respect des sauts de ligne) */
+.editorjs-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+    /* Ce qui suit est CRUCIAL pour les sauts de ligne du code */
+    white-space: pre-wrap; 
+    word-wrap: break-word;
+    font-family: monospace;
+}
