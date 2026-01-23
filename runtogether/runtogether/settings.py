@@ -89,19 +89,6 @@ INSTALLED_APPS = [
     "relation",
     "planning",
     "map",
-    "wagtail.contrib.forms",
-    "wagtail.contrib.redirects",
-    "wagtail.embeds",
-    "wagtail.sites",
-    "wagtail.users",
-    "wagtail.snippets",
-    "wagtail.documents",
-    "wagtail.images",
-    "wagtail.search",
-    "wagtail.admin",
-    "wagtail",
-    "modelcluster",
-    "taggit",
     "django_editorjs_fields",
 ]
 
@@ -115,7 +102,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "core.middleware.HTMXMessagesMiddleware",
 ]
 
