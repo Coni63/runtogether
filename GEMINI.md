@@ -97,3 +97,5 @@ The project uses `pytest` for testing.
 *   **Frontend:** UI is built with Django templates and progressively enhanced with HTMX. Styling is done with Tailwind CSS.
 *   **Environment Variables:** Application configuration is managed through environment variables using `django-environ`. A `.env` file is used for local development.
 *   **CI/CD:** GitHub Actions are used for continuous integration.
+
+*   **Backend:** Use Function-Based View as much as possible. Also views should call services.py for database access to centralize queries.

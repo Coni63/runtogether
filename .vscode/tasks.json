@@ -25,6 +25,27 @@
             "problemMatcher": []
         },
         {
+            "label": "Make migration",
+            "type": "shell",
+            "command": "cd runtogether && uv run python manage.py makemigrations",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Migrate DB",
+            "type": "shell",
+            "command": "cd runtogether && uv run python manage.py migrate",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Run tests",
+            "type": "shell",
+            "command": "cd runtogether && uv run pytest --cov=runtogether --cov-report=term --cov-report=xml --cov-report=xml --junitxml=report.xml",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
             "label": "Start App",
             "dependsOn": [
                 "Start Tailwind",
