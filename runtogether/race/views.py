@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import RaceFilterForm
 from .models import Race
 from .services import get_races_around_position
+from relation.services import get_race_for_user, get_race
+
 from dateutil.relativedelta import relativedelta
 
 
@@ -54,15 +56,27 @@ def list_races(request):
 
         radius = int(data["radius"])
 
-        races_qs = get_races_around_position(
-            center_city,
+        # races_qs = get_races_around_position(
+        #     center_city,
+        #     radius=radius,
+        #     user=request.user,
+        #     race_types=data.get("race_type"),
+        #     date_after=data.get("date_after"),
+        #     date_before=data.get("date_before"),
+        #     min_distance=data.get("min_distance"),
+        #     max_distance=data.get("max_distance"),
+        # )
+        races_qs = get_race(
+            request.user,
+            data.get("date_after"),
+            data.get("date_before"),
+            city=center_city,
             radius=radius,
-            user=request.user,
             race_types=data.get("race_type"),
-            date_after=data.get("date_after"),
-            date_before=data.get("date_before"),
             min_distance=data.get("min_distance"),
             max_distance=data.get("max_distance"),
+            statuses=data.get("status"),
+            show_favorites=data.get("show_favorites"),
         )
 
     # Pagination

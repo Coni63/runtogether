@@ -183,6 +183,31 @@
                             </div>
                         </div>
                         
+                        <!-- Status -->
+                         <div class="mb-4">
+                            <label class="label">
+                                <span class="label-text font-semibold">Statut</span>
+                            </label>
+                            <div class="flex flex-col gap-2 px-1">
+                                {% for value, label in form.status.field.choices %}
+                                    <label class="flex items-center gap-3 cursor-pointer group">
+                                        <input type="checkbox" name="status" value="{{ value }}" 
+                                               class="checkbox checkbox-primary checkbox-sm"
+                                               {% if value in form.status.value or not form.is_bound and value in form.status.field.initial %}checked{% endif %}>
+                                        <span class="label-text group-hover:text-primary transition-colors">{{ label }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                         <!-- Favorites -->
+                         <div class="mb-4">
+                             <label class="label cursor-pointer justify-start gap-4">
+                                <span class="label-text font-semibold">Favoris</span> 
+                                {{ form.show_favorites }}
+                             </label>
+                        </div>
+
                         <div class="mt-6 flex gap-2">
                             <button type="submit" class="btn btn-primary btn-sm flex-1">Apply</button>
                             <a href="{% url 'race:list' %}" class="btn btn-ghost btn-sm">Reset</a>
@@ -194,15 +219,40 @@
 
         <!-- Main Content -->
         <main class="lg:col-span-3">
-            <div id="race-list"  hx-on::after-swap="refreshMap()">
-                {% include "race/partials/race_list_results.html" %}
+
+            <div class="flex flex-col gap-4 p-4">
+                <div role="tablist" class="tabs tabs-bordered">
+                
+                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Profil" checked />
+                    <div role="tabpanel" class="tab-content p-10">
+                        <div id="race-list" hx-on::after-swap="refreshMap()">
+                            {% include "race/partials/race_list_results.html" %}
+                        </div>
+                    </div>
+
+                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paramètres" />
+                    <div role="tabpanel" class="tab-content p-10">
+                        {% include "map/map.html" %}
+                    </div>
+
+                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Sécurité" />
+                    <div role="tabpanel" class="tab-content p-10">
+                        <div id='calendar' data-fetch-url="{% url 'planning:events' %}"></div>
+                        {% include "planning/partials/modal_absence.html" %}
+                    </div>
+                    
+                </div>
             </div>
-            {% include "map/map.html" %}
+
         </main>
     </div>
 </div>
 {% endblock %}
 {% block extra_js %}
+<script src="{% static 'js/fullcalendar-core-6.1.20.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar-daygrid-6.1.20.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar-interaction-6.1.20.min.js' %}"></script>
+<script src="{% static 'js/planning.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const minInput = document.getElementById('range-min');

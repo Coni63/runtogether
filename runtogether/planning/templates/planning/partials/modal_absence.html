@@ -1,0 +1,30 @@
+<!-- Modal pour gérer les absences -->
+<dialog id="absence_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">Gérer les absences</h3>
+    
+    <div class="form-control w-full">
+      <label class="label cursor-pointer justify-start gap-4">
+        <span class="label-text font-semibold">Mode:</span> 
+        <span class="label-text">Ajouter</span>
+        <input type="checkbox" class="toggle toggle-primary" id="absence_mode_toggle" />
+        <span class="label-text">Retirer</span>
+      </label>
+    </div>
+
+    <div class="form-control w-full mt-4" id="reason_container">
+      <label class="label">
+        <span class="label-text">Raison</span>
+      </label>
+      <input type="text" id="absence_reason" placeholder="Ex: Sick, Holiday..." class="input input-bordered w-full" value="Sick" />
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn">Annuler</button>
+        <button class="btn btn-primary" id="confirm_absence_btn" data-url-add="{% url 'planning:set_absences' %}" data-url-remove="{% url 'planning:remove_absences' %}">Confirmer</button>
+      </form>
+    </div>
+  </div>
+</dialog>

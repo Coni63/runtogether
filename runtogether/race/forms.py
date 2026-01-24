@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta  # pip install python-dateutil
 from django import forms
 
 from .models import RACE_TYPE
+from relation.models import RaceUser
 
 
 class RaceFilterForm(forms.Form):
@@ -43,6 +44,21 @@ class RaceFilterForm(forms.Form):
     )
     max_distance = forms.FloatField(
         required=False, initial=200, widget=forms.NumberInput(attrs={"type": "hidden", "id": "max-distance"})
+    )
+
+    STATUS_CHOICES = [
+        (RaceUser.Status.REGISTERED, "Inscrit"),
+        (RaceUser.Status.INTERESTED, "Intéressé"),
+        (RaceUser.Status.SEARCH_BIB, "Cherche dossard"),
+    ]
+
+    status = forms.MultipleChoiceField(choices=STATUS_CHOICES, required=False, widget=forms.CheckboxSelectMultiple, initial=[])
+
+    show_favorites = forms.BooleanField(
+        required=False,
+        label="Favoris",
+        widget=forms.CheckboxInput(attrs={"class": "checkbox checkbox-primary checkbox-sm"}),
+        initial=False,
     )
 
     def __init__(self, *args, **kwargs):
