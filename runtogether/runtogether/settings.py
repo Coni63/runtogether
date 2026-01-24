@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 import environ
+import meilisearch
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -272,3 +273,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 ACCOUNT_FORMS = {
     # "signup": "accounts.forms.BasicRegisterForm",
 }
+
+MEILI_URL = "http://127.0.0.1:7700"
+MEILI_MASTER_KEY = "my_master_key"

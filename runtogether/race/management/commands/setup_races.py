@@ -4,8 +4,9 @@ from decimal import Decimal
 
 from city.models import City
 from django.core.management.base import BaseCommand
-
+from django.db import connection
 from race.models import Race
+from city.services import search_city_by_name
 
 
 class Command(BaseCommand):
@@ -28,11 +29,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Fetch existing races from database
-        self.stdout.write("Fetching existing races from database...")
-        existing_races = {c.id for c in Race.objects.all()}
+        self.stdout.write("Truncating Table")
+        with connection.cursor() as cursor:
+            cursor.execute("TRUNCATE TABLE race_race RESTART IDENTITY CASCADE;")
 
         to_create = []
-        to_update = []
 
         self.stdout.write("Loading data...")
         with open("data/Courses 2026 - Courses.csv", encoding="utf-8") as f:
@@ -58,12 +59,12 @@ class Command(BaseCommand):
                     url_race = line[8]
                     url_inscriptions = line[9]
 
-                    qs = City.objects.filter(name=city)
-
-                    if not qs.exists():
+                    results = search_city_by_name(city, 1)
+                    if not results:
                         raise AttributeError
 
-                    city_record = qs.first()
+                    city_record = City.objects.get(id=results[0]["id"])
+
                     obj = Race(
                         id=i,
                         name=course,
@@ -83,10 +84,7 @@ class Command(BaseCommand):
                         distance=distance,
                     )
 
-                    if i not in existing_races:
-                        to_create.append(obj)
-                    elif options["force"]:
-                        to_update.append(obj)
+                    to_create.append(obj)
                 except (IndexError, ValueError):
                     continue
                 except AttributeError:
@@ -97,27 +95,4 @@ class Command(BaseCommand):
                 self.stdout.write(f"Creating {len(to_create)} new cities...")
                 Race.objects.bulk_create(to_create, batch_size=5000)
 
-            # Bulk Update
-            if to_update:
-                self.stdout.write(f"Updating {len(to_update)} cities...")
-                Race.objects.bulk_update(
-                    to_update,
-                    [
-                        "name",
-                        "date_course",
-                        "date_validated",
-                        "inscription_status",
-                        "date_inscriptions_open",
-                        "city",
-                        "latitude",
-                        "longitude",
-                        "location",
-                        "race_type",
-                        "private",
-                        "url_race",
-                        "url_inscriptions",
-                    ],
-                    batch_size=5000,
-                )
-
-            self.stdout.write(self.style.SUCCESS(f"Done! Created: {len(to_create)}, Updated: {len(to_update)}"))
+            self.stdout.write(self.style.SUCCESS(f"Done! Created: {len(to_create)}"))
