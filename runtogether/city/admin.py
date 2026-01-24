@@ -6,6 +6,6 @@ from .models import City
 
 @admin.register(City)
 class CityAdmin(GISModelAdmin):
-    list_display = ("name", "country", "population", "last_modified")
+    list_display = ("name", "country")
     list_filter = ("country",)
-    search_fields = ("name", "clean_name")
+    search_fields = ("name",)

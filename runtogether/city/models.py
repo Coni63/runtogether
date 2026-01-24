@@ -7,17 +7,14 @@ from django.db import models
 class City(models.Model):
     id = models.BigIntegerField(primary_key=True, unique=True)
     name = models.CharField(max_length=60, null=False, blank=False)
-    clean_name = models.CharField(max_length=60, null=False, blank=False)
     latitude = models.DecimalField(max_digits=7, decimal_places=5, null=False, blank=False)
     longitude = models.DecimalField(max_digits=8, decimal_places=5, null=False, blank=False)
     location = geomodels.PointField(geography=True, srid=4326, null=True, blank=True)  # srid 4326 = WGS84
-    country = models.CharField(max_length=2, null=False, blank=False)
-    population = models.BigIntegerField(default=0)
-    last_modified = models.DateField(null=False, blank=False)
+    country = models.CharField(max_length=50, null=False, blank=False)
 
     class Meta:
         indexes = [
-            GinIndex(fields=["clean_name"], opclasses=["gin_trgm_ops"], name="city_clean_name_gin_trgm_idx"),
+            GinIndex(fields=["name"], opclasses=["gin_trgm_ops"], name="city_clean_name_gin_trgm_idx"),
         ]
 
     def save(self, *args, **kwargs):
