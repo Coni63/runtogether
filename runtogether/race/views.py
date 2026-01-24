@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .forms import RaceFilterForm
 from .models import Race
-from .service import get_races_around_position
+from .services import get_races_around_position
 from dateutil.relativedelta import relativedelta
 
 

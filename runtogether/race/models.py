@@ -48,6 +48,11 @@ class Race(models.Model):
         help_text="List of distances in kilometers",
     )
     nightrun = models.BooleanField(default=False, help_text="Indicates if the race is run by night")
+    participants = models.ManyToManyField(
+        "accounts.User",
+        through="relation.RaceUser",
+        related_name="races",
+    )
 
     def save(self, *args, **kwargs):
         # If location is set, sync longitude and latitude
