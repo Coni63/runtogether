@@ -26,5 +26,18 @@ services:
     restart: always
     ports:
       - '6379:6379'
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+    environment:
+      - MEILI_MASTER_KEY=my_master_key
+      - MEILI_ENV=development
+    restart: always
+
 volumes:
   postgres_data:
+  meili_data:
