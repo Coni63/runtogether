@@ -1,0 +1,109 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="flex items-center justify-center space-x-2 my-8">
+  <!-- First -->
+  {% if page_obj.has_previous %}
+    <button type="button"
+            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+            hx-get="?page=1" 
+            hx-include="#filter-form"
+            hx-target="#race-list" 
+            hx-push-url="true">
+      «
+    </button>
+  {% else %}
+    <span class="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-400 cursor-not-allowed">
+      «
+    </span>
+  {% endif %}
+  
+  <!-- Previous -->
+  {% if page_obj.has_previous %}
+    <button type="button"
+            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+            hx-get="?page={{ page_obj.previous_page_number }}" 
+            hx-include="#filter-form"
+            hx-target="#race-list" 
+            hx-push-url="true">
+      ‹
+    </button>
+  {% else %}
+    <span class="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-400 cursor-not-allowed">
+      ‹
+    </span>
+  {% endif %}
+  
+  <!-- Pages -->
+  {% for num in page_obj.paginator.page_range %}
+    {% if num == page_obj.number %}
+      <span class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium">
+        {{ num }}
+      </span>
+    {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+      <button type="button"
+              class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+              hx-get="?page={{ num }}" 
+              hx-include="#filter-form"
+              hx-target="#race-list" 
+              hx-push-url="true">
+        {{ num }}
+      </button>
+    {% elif num == 1 and page_obj.number > 4 %}
+      <button type="button"
+              class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+              hx-get="?page=1" 
+              hx-include="#filter-form"
+              hx-target="#race-list" 
+              hx-push-url="true">
+        1
+      </button>
+      <span class="px-2 text-gray-500">...</span>
+    {% elif num == page_obj.paginator.num_pages and page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+      <span class="px-2 text-gray-500">...</span>
+      <button type="button"
+              class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+              hx-get="?page={{ page_obj.paginator.num_pages }}" 
+              hx-include="#filter-form"
+              hx-target="#race-list" 
+              hx-push-url="true">
+        {{ page_obj.paginator.num_pages }}
+      </button>
+    {% endif %}
+  {% endfor %}
+  
+  <!-- Next -->
+  {% if page_obj.has_next %}
+    <button type="button"
+            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+            hx-get="?page={{ page_obj.next_page_number }}" 
+            hx-include="#filter-form"
+            hx-target="#race-list" 
+            hx-push-url="true">
+      ›
+    </button>
+  {% else %}
+    <span class="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-400 cursor-not-allowed">
+      ›
+    </span>
+  {% endif %}
+  
+  <!-- Last -->
+  {% if page_obj.has_next %}
+    <button type="button"
+            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+            hx-get="?page={{ page_obj.paginator.num_pages }}" 
+            hx-include="#filter-form"
+            hx-target="#race-list" 
+            hx-push-url="true">
+      »
+    </button>
+  {% else %}
+    <span class="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-400 cursor-not-allowed">
+      »
+    </span>
+  {% endif %}
+</nav>
+<div class="text-center text-sm text-gray-600">
+  Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }} 
+  ({{ page_obj.paginator.count }} résultat{{ page_obj.paginator.count|pluralize }})
+</div>
+{% endif %}

@@ -1,0 +1,59 @@
+// Initialiser la carte
+// Check if map is already initialized to avoid error on re-include or htmx swap if applicable, 
+// though here it's full page load mostly.
+// However, L.map('map') throws if container already has map.
+
+var container = L.DomUtil.get('map');
+if(container != null){
+    container._leaflet_id = null;
+}
+
+var map = L.map('map').setView([46.8, 2.4], 6); // Centre sur la France
+
+// Ajouter le fond de carte OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+var markersLayer = L.layerGroup().addTo(map);
+
+// On définit la fonction globalement pour qu'elle soit appelable par hx-on
+window.refreshMap = function() {
+    // 1. Effacer les anciens markers
+    markersLayer.clearLayers();
+
+    // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
+    map.invalidateSize();
+    
+    // 2. Parcourir les nouveaux éléments injectés par HTMX
+    var bounds = L.latLngBounds();
+    var hasMarkers = false;
+
+    // Note: #race-list dependency. If reused elsewhere, this selector might need to be dynamic.
+    // For now we keep it as is per user context.
+    document.querySelectorAll('#race-list .event-item').forEach(el => {
+        const lat = parseFloat(el.dataset.lat);
+        const lng = parseFloat(el.dataset.lng);
+        
+        if (lat && lng) {
+            const marker = L.marker([lat, lng]);
+            if (el.dataset.name) marker.bindPopup(el.dataset.name);
+            markersLayer.addLayer(marker);
+            bounds.extend([lat, lng]);
+            hasMarkers = true;
+        }
+    });
+
+    // 3. Optionnel : Recadrer la carte pour voir tous les nouveaux points
+    if (hasMarkers) {
+        map.fitBounds(bounds.pad(0.1));
+    }
+};
+
+function onMapTabShown() {
+    // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
+    map.invalidateSize();
+
+    refreshMap();
+}

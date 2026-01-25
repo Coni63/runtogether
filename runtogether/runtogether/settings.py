@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django.contrib.gis",
+    # libs
     "tailwind",
     "theme",
     "crispy_forms",
@@ -79,6 +80,9 @@ INSTALLED_APPS = [
     # "allauth.socialaccount.providers.strava",
     "widget_tweaks",
     "slippers",
+    "django_editorjs_fields",
+    "sekizai",
+    # apps
     "home",
     "core",
     "accounts",
@@ -90,7 +94,6 @@ INSTALLED_APPS = [
     "relation",
     "planning",
     "map",
-    "django_editorjs_fields",
 ]
 
 MIDDLEWARE = [
@@ -118,6 +121,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "sekizai.context_processors.sekizai",
             ],
         },
     },

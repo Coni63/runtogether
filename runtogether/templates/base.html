@@ -1,5 +1,6 @@
 {% load static tailwind_tags %}
 {% load django_htmx %}
+{% load sekizai_tags %}
 
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -21,6 +22,7 @@
     {% tailwind_css %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
+    {% render_block "css" %}
 
     <script src="{% static 'js/lucide.js' %}"></script>
 
@@ -50,5 +52,6 @@
     {# JavaScript #}
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}
+    {% render_block "js" %}
 </body>
 </html>

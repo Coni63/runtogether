@@ -4,86 +4,6 @@
 {% block title %}Races - Run Together{% endblock %}
 
 
-{% block extra_css %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-    /* Custom styles for the double slider */
-    .range-slider {
-        position: relative;
-        width: 100%;
-        height: 24px; /* Sufficient height for thumbs */
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-    .range-slider input[type="range"] {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 100%;
-        -webkit-appearance: none;
-        appearance: none; 
-        background: transparent; /* Transparent track */
-        pointer-events: none; /* Allow clicks to pass through track */
-        z-index: 2;
-        margin: 0;
-    }
-    
-    /* WebKit Thumb */
-    .range-slider input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        pointer-events: auto; /* Capture clicks on thumb */
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #4f46e5; /* Primary color */
-        cursor: pointer;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        border: 2px solid white; /* Optional: adds a nice border */
-    }
-    
-    /* Firefox Thumb */
-    .range-slider input[type="range"]::-moz-range-thumb {
-        pointer-events: auto;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #4f46e5;
-        cursor: pointer;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        border: 2px solid white;
-    }
-
-    /* Track Background */
-    .slider-track {
-        position: absolute;
-        width: 100%;
-        height: 6px;
-        background: #e5e7eb; /* base-200 */
-        border-radius: 3px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-    }
-    
-    /* Active Range (Colored part of track) */
-    .slider-range {
-        position: absolute;
-        height: 6px;
-        background: #4f46e5;
-        border-radius: 3px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1;
-    }
-
-    #map {
-        width: 100%;
-    }
-</style>
-{% endblock %}
-
-
 {% block content %}
 <div class="container mx-auto px-4 py-8">
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -102,9 +22,7 @@
                 
                     <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Profil" checked />
                     <div role="tabpanel" class="tab-content p-10">
-                        <div id="race-list" hx-on::after-swap="refreshMap()">
-                            {% include "race/partials/race_list_results.html" %}
-                        </div>
+                        {% include "race/partials/race_list_results.html" %}
                     </div>
 
                     <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paramètres" onclick="onMapTabShown()" />
@@ -114,8 +32,7 @@
 
                     <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Sécurité" onclick="onCalendarTabShown()" />
                     <div role="tabpanel" class="tab-content p-10">
-                        <div id='calendar' data-fetch-url="{% url 'planning:events' %}"></div>
-                        {% include "planning/partials/modal_absence.html" %}
+                        {% include "planning/planning.html" %}
                     </div>
                     
                 </div>
@@ -124,135 +41,4 @@
         </main>
     </div>
 </div>
-{% endblock %}
-{% block extra_js %}
-<script src="{% static 'js/fullcalendar-core-6.1.20.min.js' %}"></script>
-<script src="{% static 'js/fullcalendar-daygrid-6.1.20.min.js' %}"></script>
-<script src="{% static 'js/fullcalendar-interaction-6.1.20.min.js' %}"></script>
-<script src="{% static 'js/planning.js' %}"></script>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    // Initialiser la carte
-    // Check if map is already initialized to avoid error on re-include or htmx swap if applicable, 
-    // though here it's full page load mostly.
-    // However, L.map('map') throws if container already has map.
-    
-    var container = L.DomUtil.get('map');
-    if(container != null){
-      container._leaflet_id = null;
-    }
-
-    var map = L.map('map').setView([46.8, 2.4], 6); // Centre sur la France
-    
-    // Ajouter le fond de carte OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    var markersLayer = L.layerGroup().addTo(map);
-
-    // On définit la fonction globalement pour qu'elle soit appelable par hx-on
-    window.refreshMap = function() {
-        console.log("calling refreshMap");
-        // 1. Effacer les anciens markers
-        markersLayer.clearLayers();
-
-        // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
-        map.invalidateSize();
-        
-        // 2. Parcourir les nouveaux éléments injectés par HTMX
-        var bounds = L.latLngBounds();
-        var hasMarkers = false;
-
-        // Note: #race-list dependency. If reused elsewhere, this selector might need to be dynamic.
-        // For now we keep it as is per user context.
-        document.querySelectorAll('#race-list .event-item').forEach(el => {
-            const lat = parseFloat(el.dataset.lat);
-            const lng = parseFloat(el.dataset.lng);
-
-            console.log(lat, lng);
-            
-            if (lat && lng) {
-                const marker = L.marker([lat, lng]);
-                if (el.dataset.name) marker.bindPopup(el.dataset.name);
-                markersLayer.addLayer(marker);
-                bounds.extend([lat, lng]);
-                hasMarkers = true;
-            }
-        });
-
-        // 3. Optionnel : Recadrer la carte pour voir tous les nouveaux points
-        if (hasMarkers) {
-            map.fitBounds(bounds.pad(0.1));
-        }
-    };
-
-    function onMapTabShown() {
-        // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
-        map.invalidateSize();
-
-        refreshMap();
-    }
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const minInput = document.getElementById('range-min');
-        const maxInput = document.getElementById('range-max');
-        const minHidden = document.getElementById('min-distance');
-        const maxHidden = document.getElementById('max-distance');
-        const range = document.getElementById('slider-range');
-        const minDisplay = document.getElementById('min-display');
-        const maxDisplay = document.getElementById('max-display');
-
-        function updateSlider() {
-            let min = parseInt(minInput.value);
-            let max = parseInt(maxInput.value);
-
-            const percentMin = (min / minInput.max) * 100;
-            const percentMax = (max / maxInput.max) * 100;
-
-            range.style.left = percentMin + "%";
-            range.style.width = (percentMax - percentMin) + "%";
-            
-            minDisplay.textContent = min;
-            maxDisplay.textContent = max;
-
-            // Update hidden inputs
-            if (minHidden.value != min) minHidden.value = min;
-            if (maxHidden.value != max) maxHidden.value = max;
-        }
-
-        minInput.addEventListener('input', function() {
-            let min = parseInt(this.value);
-            let max = parseInt(maxInput.value);
-            if (min > max) {
-                this.value = max;
-                min = max;
-            }
-            updateSlider();
-            minHidden.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-
-        maxInput.addEventListener('input', function() {
-            let min = parseInt(minInput.value);
-            let max = parseInt(this.value);
-            if (max < min) {
-                this.value = min;
-                max = min;
-            }
-            updateSlider();
-            maxHidden.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-
-        // Initial update
-        updateSlider();
-        
-        // Initial map refresh
-        refreshMap();
-    });
-
-</script>
 {% endblock %}
