@@ -18,27 +18,57 @@
         <main class="lg:col-span-3">
 
             <div class="flex flex-col gap-4 p-4">
-                <div role="tablist" class="tabs tabs-bordered">
-                
-                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Profil" checked />
-                    <div role="tabpanel" class="tab-content p-10">
-                        {% include "race/partials/race_list_results.html" %}
-                    </div>
+                <div class="w-full">
+                    <div role="tablist" class="tabs tabs-bordered justify-center gap-2 bg-base-200">
 
-                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paramètres" onclick="onMapTabShown()" />
-                    <div role="tabpanel" class="tab-content p-10">
-                        {% include "map/map.html" %}
-                    </div>
+                        <input
+                            type="radio"
+                            name="my_tabs_1"
+                            role="tab"
+                            class="tab gap-2"
+                            aria-label="Table"
+                            checked
+                        />
+                        <div role="tabpanel" class="tab-content mt-4 p-6 bg-base-100 rounded-xl shadow">
+                            {% include "race/partials/race_list_results.html" %}
+                        </div>
 
-                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Sécurité" onclick="onCalendarTabShown()" />
-                    <div role="tabpanel" class="tab-content p-10">
-                        {% include "planning/planning.html" %}
+                        <input
+                            type="radio"
+                            name="my_tabs_1"
+                            role="tab"
+                            class="tab gap-2"
+                            aria-label="Map"
+                            onclick="onMapTabShown()"
+                        />
+                        <div role="tabpanel" class="tab-content mt-4 p-6 bg-base-100 rounded-xl shadow">
+                            {% include "map/map.html" %}
+                        </div>
+
+                        <input
+                            type="radio"
+                            name="my_tabs_1"
+                            role="tab"
+                            class="tab gap-2"
+                            aria-label="Planning"
+                            onclick="onCalendarTabShown()"
+                        />
+                        <div role="tabpanel" class="tab-content mt-4 p-6 bg-base-100 rounded-xl shadow">
+                            {% include "planning/planning.html" %}
+                        </div>
                     </div>
-                    
                 </div>
             </div>
-
+            
+            <div class="flex justify-center mt-8">
+                <button class="btn btn-outline btn-primary gap-2" onclick="openProposeRaceModal()">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    Propose a Missing Race
+                </button>
+            </div>
         </main>
     </div>
 </div>
+{% include "race/partials/modal_signal_error.html" %}
+{% include "race/partials/modal_propose_race.html" %}
 {% endblock %}

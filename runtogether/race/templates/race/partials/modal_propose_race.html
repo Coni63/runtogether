@@ -1,0 +1,107 @@
+{% load sekizai_tags %}
+
+<dialog id="propose_race_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-2xl">
+        <h3 class="font-bold text-lg mb-4">Propose a Missing Race</h3>
+        <p class="text-sm text-gray-500 mb-4">If you know of a race that is missing from our list, please share the details below. Providing the official website URL is the best way to help us!</p>
+        
+        <form method="dialog" id="propose_race_form">
+            
+            <!-- URL Section -->
+            <div class="form-control w-full mb-6">
+                <label class="label">
+                    <span class="label-text font-semibold">Race Website URL</span>
+                    <span class="label-text-alt">Preferred</span>
+                </label>
+                <input type="url" name="url" placeholder="https://example.com/race-info" class="input input-bordered w-full" />
+                <label class="label">
+                    <span class="label-text-alt text-gray-500">If you provide a URL, we can often fetch the details automatically.</span>
+                </label>
+            </div>
+
+            <div class="divider">OR / AND</div>
+            <p class="text-sm font-semibold mb-2">Manually provide details (if URL is missing or incomplete)</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Name -->
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Race Name</span>
+                    </label>
+                    <input type="text" name="name" placeholder="e.g. Paris Marathon" class="input input-bordered w-full" />
+                </div>
+
+                <!-- Date -->
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Date</span>
+                    </label>
+                    <input type="date" name="date" class="input input-bordered w-full" />
+                </div>
+
+                <!-- City -->
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">City / Location</span>
+                    </label>
+                    <input type="text" name="city" placeholder="e.g. Paris" class="input input-bordered w-full" />
+                </div>
+
+                <!-- Status -->
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Inscription Status</span>
+                    </label>
+                    <select class="select select-bordered w-full" name="status">
+                        <option value="unknown" selected>Unknown</option>
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="soon">Opening Soon</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Distances -->
+            <div class="form-control w-full mt-4">
+                <label class="label">
+                    <span class="label-text">Distances (km)</span>
+                </label>
+                <input type="text" name="distances" placeholder="e.g. 10, 21.1, 42.195" class="input input-bordered w-full" />
+                <label class="label">
+                    <span class="label-text-alt">Separate multiple distances with commas</span>
+                </label>
+            </div>
+
+            <div class="modal-action">
+                <button class="btn" type="button" onclick="closeProposeRaceModal()">Cancel</button>
+                <button class="btn btn-primary" type="button" onclick="submitProposeRace()">Submit Proposal</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+{% addtoblock "js" %}
+<script>
+    function openProposeRaceModal() {
+        // Reset form
+        document.getElementById('propose_race_form').reset();
+        document.getElementById('propose_race_modal').showModal();
+    }
+
+    function closeProposeRaceModal() {
+        document.getElementById('propose_race_modal').close();
+    }
+
+    function submitProposeRace() {
+        // Here you would gather the data and send it to your backend
+        const form = document.getElementById('propose_race_form');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        console.log("Proposing Race:", data);
+        
+        // Mock success
+        closeProposeRaceModal();
+        // alert("Thanks! We will review your proposal.");
+    }
+</script>
+{% endaddtoblock %}

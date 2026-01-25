@@ -41,6 +41,11 @@
         {% endfor %}
     </td>
     <td>
-        {% include "relation/partials/race_status_dropdown.html" %}
+        <div class="flex items-center justify-end gap-2">
+            {% include "relation/partials/race_status_dropdown.html" %}
+            <button class="btn btn-circle btn-ghost btn-xs text-error tooltip tooltip-left" data-tip="Signal Error" onclick="openSignalErrorModal('{{ race.id }}', '{{ race.name|escapejs }}')">
+                <i data-lucide="alert-triangle" style="width: 16px; height: 16px;"></i>
+            </button>
+        </div>
     </td>
 </tr>

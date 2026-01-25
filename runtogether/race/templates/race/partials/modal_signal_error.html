@@ -1,0 +1,79 @@
+{% load sekizai_tags %}
+
+<dialog id="signal_error_modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Signal an Error</h3>
+        <p class="py-4 font-semibold" id="signal_error_race_name_display"></p>
+        
+        <form method="dialog" id="signal_error_form">
+            <input type="hidden" id="signal_error_race_id" name="race_id">
+            
+            <div class="form-control w-full mb-4">
+                <label class="label">
+                    <span class="label-text">Reason</span>
+                </label>
+                <select class="select select-bordered w-full" name="reason" id="signal_error_reason">
+                    <option disabled selected value="">Pick one</option>
+                    <option value="duplicate">Duplicate</option>
+                    <option value="invalid_date">Invalid Date</option>
+                    <option value="invalid_location">Invalid Location</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-control w-full mb-6">
+                <label class="label">
+                    <span class="label-text">Details</span>
+                </label>
+                <textarea class="textarea textarea-bordered h-24 w-full" name="details" id="signal_error_details" placeholder="Please provide more details..."></textarea>
+            </div>
+
+            <div class="modal-action">
+                <button class="btn" type="button" onclick="closeSignalErrorModal()">Cancel</button>
+                <button class="btn btn-error" type="button" onclick="submitSignalError()">Report</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+{% addtoblock "js" %}
+<script>
+    function openSignalErrorModal(raceId, raceName) {
+        document.getElementById('signal_error_race_id').value = raceId;
+        document.getElementById('signal_error_race_name_display').innerText = 'Reporting error for: ' + raceName;
+        // Reset form
+        document.getElementById('signal_error_reason').selectedIndex = 0;
+        document.getElementById('signal_error_details').value = '';
+        
+        document.getElementById('signal_error_modal').showModal();
+    }
+
+    function closeSignalErrorModal() {
+        document.getElementById('signal_error_modal').close();
+    }
+
+    function submitSignalError() {
+        const raceId = document.getElementById('signal_error_race_id').value;
+        const reason = document.getElementById('signal_error_reason').value;
+        const details = document.getElementById('signal_error_details').value;
+
+        if (!reason) {
+            alert("Please select a reason.");
+            return;
+        }
+
+        // Mock API call
+        console.log("Submitting Error Report:", { raceId, reason, details });
+        
+        // Use a toast or alert to confirm
+        // Assuming there is a way to show messages, but standard alert is fine for now as requested "focus on UI".
+        // Or I can just close it.
+        
+        closeSignalErrorModal();
+        
+        // Optional: Show a feedback message
+        // alert("Thank you! The error has been reported.");
+    }
+</script>
+{% endaddtoblock %}
