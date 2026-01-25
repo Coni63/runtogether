@@ -161,6 +161,10 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 });
 
+function onCalendarTabShown() {
+    calendar.render();
+}
+
 function set_absences(url, dateStart, dateEnd, reason) {
     const data = {
         "dateStart": formattedDate(dateStart),

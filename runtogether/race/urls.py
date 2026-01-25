@@ -10,4 +10,5 @@ urlpatterns = [
         views.list_races,
         name="list",
     ),
+    path("create/", views.publish_new_race, name="create_race"),
 ]

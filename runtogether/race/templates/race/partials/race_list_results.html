@@ -1,9 +1,6 @@
 {% load static tailwind_filters %}
 
-<div id="race-results">
-    {% include "race/partials/race_table.html" with races=races %}
-</div>
-
+{% include "race/partials/race_table.html" with races=races %}
 
 {% if page_obj.paginator.num_pages > 1 %}
 <nav class="flex items-center justify-center space-x-2 my-8">

@@ -276,3 +276,6 @@ ACCOUNT_FORMS = {
 
 MEILI_URL = "http://127.0.0.1:7700"
 MEILI_MASTER_KEY = "my_master_key"
+
+
+X_API_KEY = "my_secret_key"

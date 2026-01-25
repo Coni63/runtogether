@@ -1,9 +1,13 @@
 from datetime import date
+
+from django.http import JsonResponse
 from city.models import City
 from django.core.paginator import Paginator
 from django.db.models.expressions import RawSQL
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
+from .decorators import api_key_required
 from .forms import RaceFilterForm
 from .models import Race
 from .services import get_races_around_position
@@ -94,3 +98,8 @@ def list_races(request):
     if request.htmx:
         return render(request, "race/partials/race_list_results.html", context)
     return render(request, "race/races.html", context)
+
+
+@api_key_required
+def publish_new_race(request):
+    return JsonResponse({"data": "succès"})

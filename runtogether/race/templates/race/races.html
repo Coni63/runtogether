@@ -5,6 +5,7 @@
 
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     /* Custom styles for the double slider */
     .range-slider {
@@ -91,131 +92,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Sidebar Filters -->
-        <aside class="lg:col-span-1">
-            <div class="card bg-base-100 shadow-xl border border-base-200 sticky top-4">
-                <div class="card-body p-6">
-                    <h2 class="card-title text-xl mb-4 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-                        </svg>
-                        Filters
-                    </h2>
-                    
-                    <form id="filter-form" 
-                          hx-get="{% url 'race:list' %}" 
-                          hx-target="#race-list" 
-                          hx-trigger="change delay:500ms, submit"
-                          hx-push-url="true">
-                        
-                        <!-- City Search -->
-                        <div class="mb-4">
-                            {% comment %} {{ form.city|as_crispy_field }} {% endcomment %}
-                            <c-city-field 
-                                name="city" 
-                                label="City"
-                                value="{{ form.city.value|default:'' }}"
-                                display_value="{% if selected_city %}{{ selected_city.name }}{% endif %}"
-                            />
-                            {% if form.city.errors %}
-                                <p class="text-error text-sm mt-1">{{ form.city.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Radius Slider -->
-                        <div class="mb-4">
-                            <label class="label">
-                                <span class="label-text font-semibold">Radius</span>
-                                <span class="label-text-alt font-bold text-primary" id="radius-val">{{ form.radius.value|default:"40" }} km</span>
-                            </label>
-                            {{ form.radius }}
-                            <div class="w-full flex justify-between text-xs px-2 mt-1 text-gray-400">
-                                <span>0</span>
-                                <span>50</span>
-                                <span>100</span>
-                                <span>150</span>
-                                <span>200</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Race Type -->
-                        <div class="mb-4">
-                            <label class="label">
-                                <span class="label-text font-semibold">Type</span>
-                            </label>
-                            <div class="flex flex-col gap-2 px-1">
-                                {% for value, label in form.race_type.field.choices %}
-                                    <label class="flex items-center gap-3 cursor-pointer group">
-                                        <input type="checkbox" name="race_type" value="{{ value }}" 
-                                               class="checkbox checkbox-primary checkbox-sm"
-                                               {% if value in form.race_type.value or not form.is_bound and value in form.race_type.field.initial %}checked{% endif %}>
-                                        <span class="label-text group-hover:text-primary transition-colors">{{ label }}</span>
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                        <!-- Date Range -->
-                        <div class="mb-4 grid grid-cols-2 gap-2">
-                             {{ form.date_after|as_crispy_field }}
-                             {{ form.date_before|as_crispy_field }}
-                        </div>
-
-                        <!-- Distance Range (Double Slider) -->
-                        <div class="mb-6">
-                            <label class="label">
-                                <span class="label-text font-semibold">Distance (km)</span>
-                                <span class="label-text-alt font-bold text-primary" id="distance-val">
-                                    <span id="min-display">0</span> - <span id="max-display">200</span> km
-                                </span>
-                            </label>
-                            
-                            <!-- Hidden inputs for form submission -->
-                            {{ form.min_distance }}
-                            {{ form.max_distance }}
-
-                            <div class="range-slider">
-                                <input type="range" min="0" max="200" value="{{ form.min_distance.value|default:0 }}" id="range-min" step="1">
-                                <input type="range" min="0" max="200" value="{{ form.max_distance.value|default:200 }}" id="range-max" step="1">
-                                
-                                <div class="slider-track"></div>
-                                <div class="slider-range" id="slider-range"></div>
-                                <!-- Thumbs are now part of inputs -->
-                            </div>
-                        </div>
-                        
-                        <!-- Status -->
-                         <div class="mb-4">
-                            <label class="label">
-                                <span class="label-text font-semibold">Statut</span>
-                            </label>
-                            <div class="flex flex-col gap-2 px-1">
-                                {% for value, label in form.status.field.choices %}
-                                    <label class="flex items-center gap-3 cursor-pointer group">
-                                        <input type="checkbox" name="status" value="{{ value }}" 
-                                               class="checkbox checkbox-primary checkbox-sm"
-                                               {% if value in form.status.value or not form.is_bound and value in form.status.field.initial %}checked{% endif %}>
-                                        <span class="label-text group-hover:text-primary transition-colors">{{ label }}</span>
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                         <!-- Favorites -->
-                         <div class="mb-4">
-                             <label class="label cursor-pointer justify-start gap-4">
-                                <span class="label-text font-semibold">Favoris</span> 
-                                {{ form.show_favorites }}
-                             </label>
-                        </div>
-
-                        <div class="mt-6 flex gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm flex-1">Apply</button>
-                            <a href="{% url 'race:list' %}" class="btn btn-ghost btn-sm">Reset</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </aside>
+        {% include "race/partials/form.html" %}
 
         <!-- Main Content -->
         <main class="lg:col-span-3">
@@ -230,12 +107,12 @@
                         </div>
                     </div>
 
-                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paramètres" />
+                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paramètres" onclick="onMapTabShown()" />
                     <div role="tabpanel" class="tab-content p-10">
                         {% include "map/map.html" %}
                     </div>
 
-                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Sécurité" />
+                    <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Sécurité" onclick="onCalendarTabShown()" />
                     <div role="tabpanel" class="tab-content p-10">
                         <div id='calendar' data-fetch-url="{% url 'planning:events' %}"></div>
                         {% include "planning/partials/modal_absence.html" %}
@@ -253,6 +130,73 @@
 <script src="{% static 'js/fullcalendar-daygrid-6.1.20.min.js' %}"></script>
 <script src="{% static 'js/fullcalendar-interaction-6.1.20.min.js' %}"></script>
 <script src="{% static 'js/planning.js' %}"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialiser la carte
+    // Check if map is already initialized to avoid error on re-include or htmx swap if applicable, 
+    // though here it's full page load mostly.
+    // However, L.map('map') throws if container already has map.
+    
+    var container = L.DomUtil.get('map');
+    if(container != null){
+      container._leaflet_id = null;
+    }
+
+    var map = L.map('map').setView([46.8, 2.4], 6); // Centre sur la France
+    
+    // Ajouter le fond de carte OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var markersLayer = L.layerGroup().addTo(map);
+
+    // On définit la fonction globalement pour qu'elle soit appelable par hx-on
+    window.refreshMap = function() {
+        console.log("calling refreshMap");
+        // 1. Effacer les anciens markers
+        markersLayer.clearLayers();
+
+        // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
+        map.invalidateSize();
+        
+        // 2. Parcourir les nouveaux éléments injectés par HTMX
+        var bounds = L.latLngBounds();
+        var hasMarkers = false;
+
+        // Note: #race-list dependency. If reused elsewhere, this selector might need to be dynamic.
+        // For now we keep it as is per user context.
+        document.querySelectorAll('#race-list .event-item').forEach(el => {
+            const lat = parseFloat(el.dataset.lat);
+            const lng = parseFloat(el.dataset.lng);
+
+            console.log(lat, lng);
+            
+            if (lat && lng) {
+                const marker = L.marker([lat, lng]);
+                if (el.dataset.name) marker.bindPopup(el.dataset.name);
+                markersLayer.addLayer(marker);
+                bounds.extend([lat, lng]);
+                hasMarkers = true;
+            }
+        });
+
+        // 3. Optionnel : Recadrer la carte pour voir tous les nouveaux points
+        if (hasMarkers) {
+            map.fitBounds(bounds.pad(0.1));
+        }
+    };
+
+    function onMapTabShown() {
+        // 🔥 IMPORTANT : forcer Leaflet à recalculer la taille
+        map.invalidateSize();
+
+        refreshMap();
+    }
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const minInput = document.getElementById('range-min');

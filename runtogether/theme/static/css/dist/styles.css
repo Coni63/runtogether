@@ -2921,9 +2921,6 @@
   .w-3\/6 {
     width: calc(3/6 * 100%);
   }
-  .w-4 {
-    width: calc(var(--spacing) * 4);
-  }
   .w-5 {
     width: calc(var(--spacing) * 5);
   }
@@ -3013,9 +3010,6 @@
   .resize {
     resize: both;
   }
-  .grid-flow-col {
-    grid-auto-flow: column;
-  }
   .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
@@ -3104,9 +3098,6 @@
   .gap-x-2 {
     column-gap: calc(var(--spacing) * 2);
   }
-  .gap-x-6 {
-    column-gap: calc(var(--spacing) * 6);
-  }
   :where(.space-x-2 > :not(:last-child)) {
     --tw-space-x-reverse: 0;
     margin-inline-start: calc(calc(var(--spacing) * 2) * var(--tw-space-x-reverse));
@@ -3116,9 +3107,6 @@
     --tw-space-x-reverse: 0;
     margin-inline-start: calc(calc(var(--spacing) * 6) * var(--tw-space-x-reverse));
     margin-inline-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-x-reverse)));
-  }
-  .gap-y-2 {
-    row-gap: calc(var(--spacing) * 2);
   }
   .justify-self-end {
     justify-self: flex-end;
@@ -3409,12 +3397,6 @@
   }
   .bg-base-100 {
     background-color: var(--color-base-100);
-  }
-  .bg-base-200 {
-    background-color: var(--color-base-200);
-  }
-  .bg-base-300 {
-    background-color: var(--color-base-300);
   }
   .bg-blue-50 {
     background-color: var(--color-blue-50);
@@ -4148,16 +4130,6 @@
   }
   .not-italic {
     font-style: normal;
-  }
-  @layer daisyui.l1.l2 {
-    .link-hover {
-      text-decoration-line: none;
-    }
-    @media (hover: hover) {
-      .link-hover:hover {
-        text-decoration-line: underline;
-      }
-    }
   }
   .no-underline {
     text-decoration-line: none;
