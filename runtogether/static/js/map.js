@@ -30,20 +30,24 @@ window.refreshMap = function() {
     var bounds = L.latLngBounds();
     var hasMarkers = false;
 
-    // Note: #race-list dependency. If reused elsewhere, this selector might need to be dynamic.
-    // For now we keep it as is per user context.
-    document.querySelectorAll('#race-list .event-item').forEach(el => {
-        const lat = parseFloat(el.dataset.lat);
-        const lng = parseFloat(el.dataset.lng);
-        
-        if (lat && lng) {
-            const marker = L.marker([lat, lng]);
-            if (el.dataset.name) marker.bindPopup(el.dataset.name);
+    const data = JSON.parse(document.getElementById('geo-data').textContent);
+    console.log(data);
+    if (data?.center) {
+        const marker = L.marker(data.center.position);
+        markersLayer.addLayer(marker);
+        bounds.extend(data.center.position);
+        hasMarkers = true;
+    }
+
+    if (data?.points) {
+        data?.points.forEach(point => {
+            const marker = L.marker(point.position);
+            marker.bindPopup(point.title);
             markersLayer.addLayer(marker);
-            bounds.extend([lat, lng]);
+            bounds.extend(point.position);
             hasMarkers = true;
-        }
-    });
+        })
+    }
 
     // 3. Optionnel : Recadrer la carte pour voir tous les nouveaux points
     if (hasMarkers) {

@@ -2,5 +2,9 @@
 
 <div id="race-list">
   {% include "race/partials/race_table.html" with races=races %}
-  {% include "race/partials/table_pagination.html" with race=race page=page %}
+  {% include "race/partials/table_pagination.html" with page_obj=races %}
 </div>
+
+<script id="geo-data" type="application/json" {% if oob %}hx-swap-oob="true"{% endif %}>
+   {{ geodata|safe }} 
+</script>

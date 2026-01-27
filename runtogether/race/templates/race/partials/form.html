@@ -86,7 +86,8 @@
             
             <form id="filter-form" 
                     hx-get="{% url 'race:list' %}" 
-                    hx-target="#race-list" 
+                    hx-target="#race-list"
+                    hx-swap="outerHTML"
                     hx-trigger="change delay:500ms, submit"
                     hx-push-url="true">
                 

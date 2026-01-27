@@ -1,4 +1,5 @@
 from datetime import date
+import json
 
 from django.http import JsonResponse
 from city.models import City
@@ -17,7 +18,7 @@ from dateutil.relativedelta import relativedelta
 
 
 @login_required
-def list_races(request):
+def get_races_page(request):
     # Determine initial city for the form
     initial_data = {}
     if request.user.is_authenticated and hasattr(request.user, "city") and request.user.city:
@@ -60,16 +61,6 @@ def list_races(request):
 
         radius = int(data["radius"])
 
-        # races_qs = get_races_around_position(
-        #     center_city,
-        #     radius=radius,
-        #     user=request.user,
-        #     race_types=data.get("race_type"),
-        #     date_after=data.get("date_after"),
-        #     date_before=data.get("date_before"),
-        #     min_distance=data.get("min_distance"),
-        #     max_distance=data.get("max_distance"),
-        # )
         races_qs = get_race(
             request.user,
             data.get("date_after"),
@@ -88,14 +79,29 @@ def list_races(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    geodata = {
+        "points": [
+            {
+                "position": [float(race.latitude), float(race.longitude)],
+                "title": race.name,
+                "draggable": False,
+            }
+            for race in page_obj
+        ],
+    }
+
+    if center_city:
+        geodata["center"] = {"position": [float(center_city.latitude), float(center_city.longitude)]}
+
     context = {
         "races": page_obj,
         "form": form,
-        "page_obj": page_obj,
         "selected_city": center_city,  # Pass the actual city object being used
+        "geodata": json.dumps(geodata),
+        "oob": False,
     }
-
     if request.htmx:
+        context["oob"] = True
         return render(request, "race/partials/race_list_results.html", context)
     return render(request, "race/races.html", context)
 
