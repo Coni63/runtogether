@@ -253,12 +253,18 @@
             maxHidden.dispatchEvent(new Event('change', { bubbles: true }));
         });
 
+        const filterForm = document.getElementById('filter-form');
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            refreshMap();
+            loadLocalData();
+        });
+
         // Initial update
         updateSlider();
-        
-        // Initial map refresh
-        refreshMap();
     });
+
+
 
 </script>
 {% endaddtoblock %}

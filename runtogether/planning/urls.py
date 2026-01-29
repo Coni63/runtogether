@@ -11,9 +11,9 @@ urlpatterns = [
         name="planning",
     ),
     path(
-        "events/",
-        views.get_user_calendar_events,
-        name="events",
+        "absences/",
+        views.get_user_absences,
+        name="absences",
     ),
     path("set_absences", views.set_absences_view, name="set_absences"),
     path("remove_absences", views.remove_absences_view, name="remove_absences"),

@@ -1,6 +1,6 @@
 {% load sekizai_tags static tailwind_filters tailwind_tags crispy_forms_tags %}
 
-<div id='calendar' data-fetch-url="{% url 'planning:events' %}"></div>
+<div id='calendar' data-fetch-url="{% url 'planning:absences' %}"></div>
 {% include "planning/partials/modal_absence.html" %}
 
 {% addtoblock "js" %}

@@ -7,89 +7,12 @@ let selectedEnd;
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     const fetchUrl = calendarEl.dataset.fetchUrl;
-    
     // Initialisation des éléments du modal
     const modal = document.getElementById('absence_modal');
     const toggle = document.getElementById('absence_mode_toggle');
     const reasonContainer = document.getElementById('reason_container');
     const confirmBtn = document.getElementById('confirm_absence_btn');
     const reasonInput = document.getElementById('absence_reason');
-    
-    // Form Elements for Slider
-    const minInput = document.getElementById('range-min');
-    const maxInput = document.getElementById('range-max');
-    const minHidden = document.getElementById('min-distance');
-    const maxHidden = document.getElementById('max-distance');
-    const range = document.getElementById('slider-range');
-    const minDisplay = document.getElementById('min-display');
-    const maxDisplay = document.getElementById('max-display');
-    
-    // --- Slider Logic ---
-    function updateSlider() {
-        let min = parseInt(minInput.value);
-        let max = parseInt(maxInput.value);
-
-        const percentMin = (min / minInput.max) * 100;
-        const percentMax = (max / maxInput.max) * 100;
-
-        range.style.left = percentMin + "%";
-        range.style.width = (percentMax - percentMin) + "%";
-        
-        minDisplay.textContent = min;
-        maxDisplay.textContent = max;
-
-        // Update hidden inputs
-        if (minHidden.value != min) minHidden.value = min;
-        if (maxHidden.value != max) maxHidden.value = max;
-    }
-
-    minInput.addEventListener('input', function() {
-        let min = parseInt(this.value);
-        let max = parseInt(maxInput.value);
-        if (min > max) {
-            this.value = max;
-            min = max;
-        }
-        updateSlider();
-        minHidden.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-
-    maxInput.addEventListener('input', function() {
-        let min = parseInt(minInput.value);
-        let max = parseInt(this.value);
-        if (max < min) {
-            this.value = min;
-            max = min;
-        }
-        updateSlider();
-        maxHidden.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-    
-    // Initial update of slider
-    updateSlider();
-
-    // --- Filter Form Logic ---
-    const filterForm = document.getElementById('filter-form');
-    filterForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        calendar.refetchEvents();
-    });
-    
-    // Optional: Auto-refresh on change (debounced could be better but sticking to Apply button for now is safer)
-    // But users expect "Apply" button to work.
-
-    // --- Calendar Logic ---
-
-    // Gestion de l'affichage du champ "Raison" selon le toggle
-    toggle.addEventListener('change', function() {
-        if(this.checked) {
-            // Mode Retirer -> Cacher la raison
-            reasonContainer.classList.add('hidden');
-        } else {
-            // Mode Ajouter -> Afficher la raison
-            reasonContainer.classList.remove('hidden');
-        }
-    });
 
     // Gestion du bouton Confirmer
     confirmBtn.addEventListener('click', function(e) {
@@ -117,28 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
         height: 'auto',
         selectable: true,
 
-        // URL qui renvoie tes événements
-        events: {
-            url: fetchUrl,
-            extraParams: function() {
-                const formData = new FormData(filterForm);
-                const params = {};
-                
-                // Convert FormData to object, handling multiple values
-                for (const [key, value] of formData.entries()) {
-                        if (params[key]) {
-                        if (!Array.isArray(params[key])) {
-                            params[key] = [params[key]];
-                        }
-                        params[key].push(value);
-                    } else {
-                        params[key] = value;
-                    }
-                }
-                
-                return params;
+        eventSources: [
+            // SOURCE 1 : Vos absences via l'API (dynamique)
+            {
+                url: fetchUrl,
             }
-        },
+        ],
         
         // Style des événements
         eventDidMount: function(info) {
@@ -158,10 +65,51 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.showModal();
         }
     });
-    calendar.render();
+    loadLocalData();
 });
 
 function onCalendarTabShown() {
+    loadLocalData();
+}
+
+function loadLocalData() {
+    if (!calendar) {
+        return;
+    }
+
+    // 1. Récupération et formatage
+    const geoElement = document.getElementById('geo-data');
+    if (!geoElement) return;
+
+    const coursesData = JSON.parse(geoElement.textContent);
+    
+    const formattedEvents = coursesData.points.map(course => ({
+        title: course.title,
+        start: course.date,
+        allDay: true, // Recommandé pour les dates sans heure
+        extendedProps: { 
+            type: course.type, 
+            source: 'course' 
+        }
+    }));
+
+    // 2. Mise à jour du calendrier
+    // On commence par supprimer les anciennes sources "statiques" pour éviter les doublons
+    const oldSources = calendar.getEventSources();
+    oldSources.forEach(source => {
+        // On ne supprime que la source qui n'a pas d'URL (donc notre source JSON)
+        if (source.id === 'course-source') {
+            source.remove();
+        }
+    });
+
+    // 3. On ajoute la nouvelle source
+    calendar.addEventSource({
+        id: 'course-source',
+        events: formattedEvents,
+        className: 'event-course'
+    });
+
     calendar.render();
 }
 

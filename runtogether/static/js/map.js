@@ -31,7 +31,6 @@ window.refreshMap = function() {
     var hasMarkers = false;
 
     const data = JSON.parse(document.getElementById('geo-data').textContent);
-    console.log(data);
     if (data?.center) {
         const marker = L.marker(data.center.position);
         markersLayer.addLayer(marker);

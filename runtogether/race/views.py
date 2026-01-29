@@ -1,5 +1,6 @@
 from datetime import date
 import json
+from typing import Iterable
 
 from django.http import JsonResponse
 from city.models import City
@@ -77,7 +78,7 @@ def get_races_page(request):
     # Pagination
     paginator = Paginator(races_qs, 5)
     page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+    page_obj: Iterable[Race] = paginator.get_page(page_number)
 
     geodata = {
         "points": [
@@ -85,6 +86,8 @@ def get_races_page(request):
                 "position": [float(race.latitude), float(race.longitude)],
                 "title": race.name,
                 "draggable": False,
+                "date": race.date_course.strftime("%Y-%m-%d"),
+                "type": race.race_type,
             }
             for race in page_obj
         ],
